@@ -1,0 +1,10 @@
+#!/bin/bash
+
+PROD_HOST="lobakh@fserv"
+PROD_PATH="webapps"
+
+PROD_ROOT=$PROD_HOST:$PROD_PATH
+
+FILES="*"
+
+rsync "-zavP" $FILES $PROD_ROOT

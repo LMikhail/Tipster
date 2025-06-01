@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -ae
+source ../conf/prod.env
+export FTIMP__NOMEN__UPDATE=true
+java -jar ftimp.jar
+
+#.
