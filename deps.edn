@@ -1,0 +1,46 @@
+{:paths ["src"]
+ :deps  {org.clojure/clojure {:mvn/version "1.11.1"}}
+ :aliases 
+ {:dev {:extra-paths ["dev" "test"]
+        :extra-deps {org.clojure/tools.namespace {:mvn/version "1.4.4"}
+                     criterium/criterium {:mvn/version "0.4.6"}
+                     hashp/hashp {:mvn/version "0.2.2"}}}
+  :test {:extra-paths ["test"]
+         :extra-deps {lambdaisland/kaocha {:mvn/version "1.87.1366"}
+                      lambdaisland/kaocha-cloverage {:mvn/version "1.1.89"}
+                      lambdaisland/kaocha-junit-xml {:mvn/version "1.17.101"}}}
+  :kaocha {:extra-paths ["test"]
+           :extra-deps {lambdaisland/kaocha {:mvn/version "1.87.1366"}
+                        lambdaisland/kaocha-cloverage {:mvn/version "1.1.89"}
+                        lambdaisland/kaocha-junit-xml {:mvn/version "1.17.101"}}
+           :main-opts ["-m" "kaocha.runner"]}
+  :test-watch {:extra-paths ["test"]
+               :extra-deps {lambdaisland/kaocha {:mvn/version "1.87.1366"}}
+               :main-opts ["-m" "kaocha.runner" "--watch"]}
+  :coverage {:extra-paths ["test"]
+             :extra-deps {lambdaisland/kaocha {:mvn/version "1.87.1366"}
+                          lambdaisland/kaocha-cloverage {:mvn/version "1.1.89"}}
+             :main-opts ["-m" "kaocha.runner" "--plugin" "kaocha.plugin/cloverage"]}
+  :lint {:extra-deps {clj-kondo/clj-kondo {:mvn/version "2023.12.15"}}
+         :main-opts ["-m" "clj-kondo.main"]}
+  :format {:extra-deps {cljfmt/cljfmt {:mvn/version "0.9.2"}}
+           :main-opts ["-m" "cljfmt.main"]}
+  :format-check {:extra-deps {cljfmt/cljfmt {:mvn/version "0.9.2"}}
+                 :main-opts ["-m" "cljfmt.main" "check"]}
+  :deps-tree {:deps {org.clojure/tools.deps.graph {:mvn/version "1.1.68"}}
+              :main-opts ["-m" "clojure.tools.deps.graph"]}
+  :nvd {:extra-deps {nvd-clojure/nvd-clojure {:mvn/version "4.0.0"}}
+        :main-opts ["-m" "nvd.main"]}
+  :nrepl {:extra-deps {nrepl/nrepl {:mvn/version "1.0.0"}
+                       cider/cider-nrepl {:mvn/version "0.42.1"}
+                       refactor-nrepl/refactor-nrepl {:mvn/version "3.9.1"}}
+          :main-opts ["-m" "nrepl.cmdline"]}
+  :profile {:extra-deps {com.clojure-goes-fast/clj-async-profiler {:mvn/version "1.0.3"}}}
+  :codox {:extra-deps {codox/codox {:mvn/version "0.10.8"}}
+          :main-opts ["-m" "codox.main"]}
+  :uberjar {:extra-deps {uberdeps/uberdeps {:mvn/version "1.3.0"}}
+            :main-opts ["-m" "uberdeps.uberjar"]}
+  :bench {:extra-deps {criterium/criterium {:mvn/version "0.4.6"}}
+          :exec-fn wam-emulator.bench/run-benchmarks}
+  :outdated {:extra-deps {com.github.liquidz/antq {:mvn/version "2.8.1201"}}
+             :main-opts ["-m" "antq.core"]}}} 
