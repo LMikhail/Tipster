@@ -1,7 +1,0 @@
-#!/bin/bash
-
-set -ae
-source ../conf/prod.env
-java -jar ftimp.jar
-
-
