@@ -1,12 +1,14 @@
 #kaocha/v1
-{:tests [{:id          :unit
-          :test-paths  ["test"]
+{:tests [{:id :unit
+          :test-paths ["test"]
           :source-paths ["src"]
-          :ns-patterns ["-test$"]}]
+          :ns-patterns ["tipster.*-test"]}]}
 
- :plugins [:kaocha.plugin/randomize
-           :kaocha.plugin/filter
-           :kaocha.plugin/capture-output]
+ :plugins [:kaocha.plugin/profiling
+           :kaocha.plugin/cloverage]
+ 
+ :cloverage/opts {:runner :kaocha
+                  :test-ns-regex #"tipster\..*-test"}
 
  :kaocha.plugin.capture-output/capture-output? true
 

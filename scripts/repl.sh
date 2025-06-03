@@ -1,18 +1,18 @@
 #!/bin/bash
 
-# Запуск REPL с предзагруженным WAM эмулятором
-echo "Starting Clojure REPL with WAM emulator loaded..."
+# Запуск REPL с предзагруженным Tipster логическим движком
+echo "Starting Clojure REPL with Tipster logic engine loaded..."
 echo "Available functions:"
-echo "  (wam/reset-wam!)                    - Reset WAM state"
-echo "  (wam/run-wam)                       - Run current program"
-echo "  @wam/X                              - View X registers"
-echo "  @wam/heap                           - View heap"
-echo "  @wam/program-code                   - View current program"
+echo "  (tipster/demo-tipster)              - Run demonstration"
+echo "  (tipster/reset-tipster!)            - Reset knowledge base"
+echo "  (tipster/deffact (human alice))     - Add facts"
+echo "  (tipster/query (human ?X))          - Query knowledge base"
+echo "  @tipster/knowledge-base             - View knowledge base"
 echo ""
 echo "Testing functions:"
-echo "  (require 'wam-emulator.core-test)   - Load tests"
-echo "  (run-tests 'wam-emulator.core-test) - Run all tests"
-echo "  (test-specific-function)            - Run specific test"
+echo "  (require 'tipster.core-test)        - Load tests"
+echo "  (run-tests 'tipster.core-test)      - Run all tests"
+echo "  (test-unify-compound-terms)         - Run specific test"
 echo ""
 
-clj -M -e "(require '[wam-emulator.core :as wam]) (in-ns 'user)" 
+clj -M -e "(require '[tipster.core :as tipster]) (in-ns 'user)" 
