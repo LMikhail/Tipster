@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Скрипт для непрерывной интеграции (CI)
-echo "Running CI pipeline for WAM Emulator..."
-echo "======================================"
+echo "Running CI pipeline for Tipster Logic Engine..."
+echo "==============================================="
 
 set -e  # Останавливаться при первой ошибке
 
 echo ""
 echo "1. Checking code formatting..."
-./format.sh
+./scripts/format.sh
 if [ $? -ne 0 ]; then
     echo "❌ Code formatting check failed!"
     exit 1
@@ -17,7 +17,7 @@ echo "✅ Code formatting OK"
 
 echo ""
 echo "2. Running linter..."
-./lint.sh
+./scripts/lint.sh
 if [ $? -ne 0 ]; then
     echo "❌ Linting failed!"
     exit 1
@@ -26,7 +26,7 @@ echo "✅ Linting OK"
 
 echo ""
 echo "3. Running tests with coverage..."
-./coverage.sh
+./scripts/coverage.sh
 if [ $? -ne 0 ]; then
     echo "❌ Tests failed!"
     exit 1
@@ -48,6 +48,13 @@ else
 fi
 
 echo ""
+echo "6. Running performance benchmarks..."
+echo "This may take a few minutes..."
+./scripts/bench.sh
+echo "✅ Benchmarks complete"
+
+echo ""
 echo "🎉 CI pipeline completed successfully!"
 echo "Coverage report: target/coverage/index.html"
-echo "Test results: target/junit.xml" 
+echo "Test results: target/junit.xml"
+echo "Benchmark results logged above" 

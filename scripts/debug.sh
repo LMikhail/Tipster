@@ -1,24 +1,25 @@
 #!/bin/bash
 
-# Отладочный режим WAM эмулятора с детальным выводом
-echo "WAM Emulator Debug Mode"
-echo "======================="
+# Отладочный режим Tipster логического движка с детальным выводом
+echo "Tipster Logic Engine Debug Mode"
+echo "==============================="
 
 echo ""
 echo "Running simple test with detailed output:"
 clj -M -e "
-(require '[wam-emulator.core :as wam])
-(wam/reset-wam!)
-(reset! wam/program-code [[:put_constant 'a 0] [:get_constant 'a 0] [:proceed]])
+(require '[tipster.core :as tipster])
+(tipster/reset-tipster!)
 (println \"Initial state:\")
-(println \"  P:\" @wam/P)
-(println \"  X:\" @wam/X) 
-(println \"  Heap:\" @wam/heap)
-(println \"  Program:\" @wam/program-code)
-(println \"\nExecuting...\")
-(wam/run-wam)
-(println \"\nFinal state:\")
-(println \"  P:\" @wam/P)
-(println \"  X:\" @wam/X)
-(println \"  Heap:\" @wam/heap)
+(println \"  Knowledge Base:\" @tipster/knowledge-base)
+(println \"\nAdding facts...\")
+(tipster/deffact (test-fact alice))
+(tipster/deffact (parent alice bob))
+(println \"  Knowledge Base after facts:\" @tipster/knowledge-base)
+(println \"\nAdding rule...\")
+(tipster/defrule (grandparent ?X ?Z) [(parent ?X ?Y) (parent ?Y ?Z)])
+(println \"  Knowledge Base after rule:\" @tipster/knowledge-base)
+(println \"\nQuerying facts...\")
+(println \"  Query (test-fact ?X):\" (tipster/query (test-fact ?X)))
+(println \"  Query (parent ?X ?Y):\" (tipster/query (parent ?X ?Y)))
+(println \"\nDebug complete!\")
 " 

@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Запуск тестов с анализом покрытия кода
-echo "Running WAM Emulator tests with code coverage..."
+echo "Running Tipster Logic Engine tests with code coverage..."
 echo "Results will be saved to target/coverage/"
-echo "==============================================="
+echo "======================================================="
 
 # Запуск тестов с coverage
 clj -M:coverage
