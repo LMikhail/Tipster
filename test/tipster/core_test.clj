@@ -1,6 +1,11 @@
 (ns tipster.core-test
   (:require [clojure.test :refer :all]
-            [tipster.core :as tipster]))
+            [tipster.core :as tipster]
+            [tipster.terms :as terms]
+            [tipster.bindings :as bindings]
+            [tipster.unification :as unif]
+            [tipster.knowledge :as knowledge]
+            [tipster.solver :as solver]))
 
 (defn reset-tipster-for-test! []
   "Сброс состояния Tipster перед каждым тестом"
@@ -10,130 +15,130 @@
 
 (deftest test-term-creation
   (testing "Создание различных типов термов"
-    (let [var (tipster/make-variable "X")
-          atom (tipster/make-atom 'hello)
-          compound (tipster/make-compound 'f 'a 'b)]
+    (let [var (terms/make-variable "X")
+          atom (terms/make-atom 'hello)
+          compound (terms/make-compound 'f 'a 'b)]
       
-      (is (tipster/is-variable? var) "Переменная должна быть переменной")
-      (is (not (tipster/is-variable? atom)) "Атом не должен быть переменной")
-      (is (not (tipster/is-variable? compound)) "Составной терм не должен быть переменной")
+      (is (terms/is-variable? var) "Переменная должна быть переменной")
+      (is (not (terms/is-variable? atom)) "Атом не должен быть переменной")
+      (is (not (terms/is-variable? compound)) "Составной терм не должен быть переменной")
       
-      (is (tipster/is-compound? compound) "Составной терм должен быть составным")
-      (is (not (tipster/is-compound? var)) "Переменная не должна быть составной")
-      (is (not (tipster/is-compound? atom)) "Атом не должен быть составным")
+      (is (terms/is-compound? compound) "Составной терм должен быть составным")
+      (is (not (terms/is-compound? var)) "Переменная не должна быть составной")
+      (is (not (terms/is-compound? atom)) "Атом не должен быть составным")
       
-      (is (= :variable (tipster/term-type var)))
-      (is (= :atom (tipster/term-type atom)))
-      (is (= :compound (tipster/term-type compound)))
+      (is (= :variable (terms/term-type var)))
+      (is (= :atom (terms/term-type atom)))
+      (is (= :compound (terms/term-type compound)))
       
-      (is (= 'hello (tipster/term-value atom)))
-      (is (= compound (tipster/term-value compound))))))
+      (is (= 'hello (terms/term-value atom)))
+      (is (= compound (terms/term-value compound))))))
 
 (deftest test-bindings-operations
   (testing "Операции со связываниями переменных"
-    (let [var1 (tipster/make-variable "X")
-          var2 (tipster/make-variable "Y")
-          atom (tipster/make-atom 'test)
-          empty-bindings (tipster/empty-bindings)
-          bindings-with-var1 (tipster/bind-variable var1 atom empty-bindings)]
+    (let [var1 (terms/make-variable "X")
+          var2 (terms/make-variable "Y")
+          atom (terms/make-atom 'test)
+          empty-bindings (bindings/empty-bindings)
+          bindings-with-var1 (bindings/bind-variable var1 atom empty-bindings)]
       
       (is (= {} empty-bindings))
-      (is (nil? (tipster/lookup-binding var1 empty-bindings)))
-      (is (= atom (tipster/lookup-binding var1 bindings-with-var1)))
-      (is (nil? (tipster/lookup-binding var2 bindings-with-var1))))))
+      (is (nil? (bindings/lookup-binding var1 empty-bindings)))
+      (is (= atom (bindings/lookup-binding var1 bindings-with-var1)))
+      (is (nil? (bindings/lookup-binding var2 bindings-with-var1))))))
 
 (deftest test-deref-term
   (testing "Дереференсация термов"
-    (let [var1 (tipster/make-variable "X")
-          var2 (tipster/make-variable "Y")
-          atom (tipster/make-atom 'test)
-          empty-bindings (tipster/empty-bindings)
+    (let [var1 (terms/make-variable "X")
+          var2 (terms/make-variable "Y")
+          atom (terms/make-atom 'test)
+          empty-bindings (bindings/empty-bindings)
           bindings {(:id var1) atom, (:id var2) var1}]
       
       ;; Несвязанная переменная
-      (is (= var1 (tipster/deref-term var1 empty-bindings)))
+      (is (= var1 (bindings/deref-term var1 empty-bindings)))
       
       ;; Переменная связанная с атомом
-      (is (= atom (tipster/deref-term var1 bindings)))
+      (is (= atom (bindings/deref-term var1 bindings)))
       
       ;; Цепочка переменных
-      (is (= atom (tipster/deref-term var2 bindings)))
+      (is (= atom (bindings/deref-term var2 bindings)))
       
       ;; Атом остается атомом
-      (is (= atom (tipster/deref-term atom bindings))))))
+      (is (= atom (bindings/deref-term atom bindings))))))
 
 ;; === ТЕСТЫ УНИФИКАЦИИ ===
 
 (deftest test-unify-identical-terms
   (testing "Унификация идентичных термов"
-    (let [atom1 (tipster/make-atom 'test)
-          atom2 (tipster/make-atom 'test)
-          compound1 (tipster/make-compound 'f 'a 'b)
-          compound2 (tipster/make-compound 'f 'a 'b)]
+    (let [atom1 (terms/make-atom 'test)
+          atom2 (terms/make-atom 'test)
+          compound1 (terms/make-compound 'f 'a 'b)
+          compound2 (terms/make-compound 'f 'a 'b)]
       
-      (is (= (tipster/empty-bindings) (tipster/unify atom1 atom2)))
-      (is (= (tipster/empty-bindings) (tipster/unify compound1 compound2))))))
+      (is (= (bindings/empty-bindings) (unif/unify atom1 atom2)))
+      (is (= (bindings/empty-bindings) (unif/unify compound1 compound2))))))
 
 (deftest test-unify-different-atoms
   (testing "Неудачная унификация различных атомов"
-    (let [atom1 (tipster/make-atom 'test1)
-          atom2 (tipster/make-atom 'test2)]
+    (let [atom1 (terms/make-atom 'test1)
+          atom2 (terms/make-atom 'test2)]
       
-      (is (nil? (tipster/unify atom1 atom2))))))
+      (is (nil? (unif/unify atom1 atom2))))))
 
 (deftest test-unify-variable-with-atom
   (testing "Унификация переменной с атомом"
-    (let [var (tipster/make-variable "X")
-          atom (tipster/make-atom 'test)
-          result (tipster/unify var atom)]
+    (let [var (terms/make-variable "X")
+          atom (terms/make-atom 'test)
+          result (unif/unify var atom)]
       
       (is (not (nil? result)))
-      (is (= atom (tipster/lookup-binding var result))))))
+      (is (= atom (bindings/lookup-binding var result))))))
 
 (deftest test-unify-variable-with-variable
   (testing "Унификация переменной с переменной"
-    (let [var1 (tipster/make-variable "X")
-          var2 (tipster/make-variable "Y")
-          result (tipster/unify var1 var2)]
+    (let [var1 (terms/make-variable "X")
+          var2 (terms/make-variable "Y")
+          result (unif/unify var1 var2)]
       
       (is (not (nil? result)))
-      (is (or (= var2 (tipster/lookup-binding var1 result))
-              (= var1 (tipster/lookup-binding var2 result)))))))
+      (is (or (= var2 (bindings/lookup-binding var1 result))
+              (= var1 (bindings/lookup-binding var2 result)))))))
 
 (deftest test-unify-compound-terms
   (testing "Унификация составных термов"
-    (let [var1 (tipster/make-variable "X")
-          var2 (tipster/make-variable "Y")
-          compound1 (tipster/make-compound 'f var1 'b)
-          compound2 (tipster/make-compound 'f 'a var2)
-          result (tipster/unify compound1 compound2)]
+    (let [var1 (terms/make-variable "X")
+          var2 (terms/make-variable "Y")
+          compound1 (terms/make-compound 'f var1 'b)
+          compound2 (terms/make-compound 'f 'a var2)
+          result (unif/unify compound1 compound2)]
       
       (is (not (nil? result)))
-      (is (= (tipster/make-atom 'a) (tipster/lookup-binding var1 result)))
-      (is (= (tipster/make-atom 'b) (tipster/lookup-binding var2 result))))))
+      (is (= (terms/make-atom 'a) (bindings/lookup-binding var1 result)))
+      (is (= (terms/make-atom 'b) (bindings/lookup-binding var2 result))))))
 
 (deftest test-unify-different-functors
   (testing "Неудачная унификация термов с различными функторами"
-    (let [compound1 (tipster/make-compound 'f 'a)
-          compound2 (tipster/make-compound 'g 'a)]
+    (let [compound1 (terms/make-compound 'f 'a)
+          compound2 (terms/make-compound 'g 'a)]
       
-      (is (nil? (tipster/unify compound1 compound2))))))
+      (is (nil? (unif/unify compound1 compound2))))))
 
 (deftest test-unify-different-arity
   (testing "Неудачная унификация термов с различной арностью"
-    (let [compound1 (tipster/make-compound 'f 'a 'b)
-          compound2 (tipster/make-compound 'f 'a)]
+    (let [compound1 (terms/make-compound 'f 'a 'b)
+          compound2 (terms/make-compound 'f 'a)]
       
-      (is (nil? (tipster/unify compound1 compound2))))))
+      (is (nil? (unif/unify compound1 compound2))))))
 
 (deftest test-occurs-check
   (testing "Проверка вхождения (occurs check)"
-    (let [var (tipster/make-variable "X")
-          compound (tipster/make-compound 'f var)
-          bindings (tipster/empty-bindings)]
+    (let [var (terms/make-variable "X")
+          compound (terms/make-compound 'f var)
+          bindings (bindings/empty-bindings)]
       
-      (is (tipster/occurs-check var compound bindings))
-      (is (nil? (tipster/unify var compound))))))
+      (is (bindings/occurs-check var compound bindings))
+      (is (nil? (unif/unify var compound))))))
 
 ;; === ТЕСТЫ БАЗЫ ЗНАНИЙ ===
 
@@ -141,20 +146,20 @@
   (testing "Операции с базой знаний"
     (reset-tipster-for-test!)
     
-    (let [fact1 (tipster/make-compound 'human 'alice)
-          fact2 (tipster/make-compound 'human 'bob)
-          rule-head (tipster/make-compound 'mortal (tipster/make-variable "X"))
-          rule-body [(tipster/make-compound 'human (tipster/make-variable "X"))]]
+    (let [fact1 (terms/make-compound 'human 'alice)
+          fact2 (terms/make-compound 'human 'bob)
+          rule-head (terms/make-compound 'mortal (terms/make-variable "X"))
+          rule-body [(terms/make-compound 'human (terms/make-variable "X"))]]
       
       ;; Добавление фактов
-      (tipster/add-fact! fact1)
-      (tipster/add-fact! fact2)
+      (knowledge/add-fact! fact1)
+      (knowledge/add-fact! fact2)
       
       ;; Добавление правила
-      (tipster/add-rule! rule-head rule-body)
+      (knowledge/add-rule! rule-head rule-body)
       
       ;; Проверка содержимого базы знаний
-      (let [kb @tipster/knowledge-base]
+      (let [kb @knowledge/knowledge-base]
         (is (= 2 (count (:facts kb))))
         (is (= 1 (count (:rules kb))))
         (is (contains? (:facts kb) fact1))
@@ -164,16 +169,16 @@
   (testing "Очистка базы знаний"
     (reset-tipster-for-test!)
     
-    (tipster/add-fact! (tipster/make-compound 'test 'value))
-    (tipster/add-rule! (tipster/make-compound 'head 'x) [(tipster/make-compound 'body 'x)])
+    (knowledge/add-fact! (terms/make-compound 'test 'value))
+    (knowledge/add-rule! (terms/make-compound 'head 'x) [(terms/make-compound 'body 'x)])
     
-    (is (> (count (:facts @tipster/knowledge-base)) 0))
-    (is (> (count (:rules @tipster/knowledge-base)) 0))
+    (is (> (count (:facts @knowledge/knowledge-base)) 0))
+    (is (> (count (:rules @knowledge/knowledge-base)) 0))
     
-    (tipster/clear-knowledge-base!)
+    (knowledge/clear-knowledge-base!)
     
-    (is (= 0 (count (:facts @tipster/knowledge-base))))
-    (is (= 0 (count (:rules @tipster/knowledge-base))))))
+    (is (= 0 (count (:facts @knowledge/knowledge-base))))
+    (is (= 0 (count (:rules @knowledge/knowledge-base))))))
 
 ;; === ТЕСТЫ ЛОГИЧЕСКОГО СОЛВЕРА ===
 
@@ -181,96 +186,96 @@
   (testing "Решение простого факта"
     (reset-tipster-for-test!)
     
-    (let [fact (tipster/make-compound 'human 'alice)
-          query (tipster/make-compound 'human 'alice)]
+    (let [fact (terms/make-compound 'human 'alice)
+          query (terms/make-compound 'human 'alice)]
       
-      (tipster/add-fact! fact)
-      (let [solutions (tipster/solve-goal query)]
+      (knowledge/add-fact! fact)
+      (let [solutions (solver/solve-goal query)]
         (is (= 1 (count solutions)))
-        (is (= (tipster/empty-bindings) (first solutions)))))))
+        (is (= (bindings/empty-bindings) (first solutions)))))))
 
 (deftest test-solve-fact-with-variable
   (testing "Решение факта с переменной"
     (reset-tipster-for-test!)
     
-    (let [fact (tipster/make-compound 'human 'alice)
-          var (tipster/make-variable "X")
-          query (tipster/make-compound 'human var)]
+    (let [fact (terms/make-compound 'human 'alice)
+          var (terms/make-variable "X")
+          query (terms/make-compound 'human var)]
       
-      (tipster/add-fact! fact)
-      (let [solutions (tipster/solve-goal query)
+      (knowledge/add-fact! fact)
+      (let [solutions (solver/solve-goal query)
             solution (first solutions)]
         (is (= 1 (count solutions)))
-        (is (= (tipster/make-atom 'alice) (tipster/lookup-binding var solution)))))))
+        (is (= (terms/make-atom 'alice) (bindings/lookup-binding var solution)))))))
 
 (deftest test-solve-rule
   (testing "Решение через правило"
     (reset-tipster-for-test!)
     
-    (let [fact (tipster/make-compound 'human 'alice)
-          rule-head (tipster/make-compound 'mortal (tipster/make-variable "X"))
-          rule-body [(tipster/make-compound 'human (tipster/make-variable "X"))]
-          var (tipster/make-variable "Y")
-          query (tipster/make-compound 'mortal var)]
+    (let [fact (terms/make-compound 'human 'alice)
+          rule-head (terms/make-compound 'mortal (terms/make-variable "X"))
+          rule-body [(terms/make-compound 'human (terms/make-variable "X"))]
+          var (terms/make-variable "Y")
+          query (terms/make-compound 'mortal var)]
       
-      (tipster/add-fact! fact)
-      (tipster/add-rule! rule-head rule-body)
+      (knowledge/add-fact! fact)
+      (knowledge/add-rule! rule-head rule-body)
       
-      (let [solutions (tipster/solve-goal query)
+      (let [solutions (solver/solve-goal query)
             solution (first solutions)]
         (is (= 1 (count solutions)))
-        (is (= (tipster/make-atom 'alice) (tipster/lookup-binding var solution)))))))
+        (is (= (terms/make-atom 'alice) (bindings/lookup-binding var solution)))))))
 
 (deftest test-solve-multiple_solutions
   (testing "Множественные решения"
     (reset-tipster-for-test!)
     
-    (let [fact1 (tipster/make-compound 'human 'alice)
-          fact2 (tipster/make-compound 'human 'bob)
-          var (tipster/make-variable "X")
-          query (tipster/make-compound 'human var)]
+    (let [fact1 (terms/make-compound 'human 'alice)
+          fact2 (terms/make-compound 'human 'bob)
+          var (terms/make-variable "X")
+          query (terms/make-compound 'human var)]
       
-      (tipster/add-fact! fact1)
-      (tipster/add-fact! fact2)
+      (knowledge/add-fact! fact1)
+      (knowledge/add-fact! fact2)
       
-      (let [solutions (tipster/solve-goal query)]
+      (let [solutions (solver/solve-goal query)]
         (is (= 2 (count solutions)))
-        (let [bound-values (set (map #(tipster/lookup-binding var %) solutions))]
-          (is (contains? bound-values (tipster/make-atom 'alice)))
-          (is (contains? bound-values (tipster/make-atom 'bob))))))))
+        (let [bound-values (set (map #(bindings/lookup-binding var %) solutions))]
+          (is (contains? bound-values (terms/make-atom 'alice)))
+          (is (contains? bound-values (terms/make-atom 'bob))))))))
 
 ;; === ТЕСТЫ ИНТЕГРАЦИИ С CLOJURE ===
 
 (deftest test-clojure-to-tipster-conversion
   (testing "Преобразование Clojure-данных в термы Tipster"
-    (let [atom-term (tipster/clojure-term->tipster-term 'hello)
-          var-term (tipster/clojure-term->tipster-term '?X)
-          list-term (tipster/clojure-term->tipster-term '(f a b))
-          vector-term (tipster/clojure-term->tipster-term '[a b c])]
+    (let [atom-term (terms/clojure-term->tipster-term 'hello)
+          var-term (terms/clojure-term->tipster-term '?X)
+          list-term (terms/clojure-term->tipster-term '(f a b))
+          vector-term (terms/clojure-term->tipster-term '[a b c])]
       
-      (is (= :atom (tipster/term-type atom-term)))
-      (is (= 'hello (tipster/term-value atom-term)))
+      (is (= :atom (terms/term-type atom-term)))
+      (is (= 'hello (terms/term-value atom-term)))
       
-      (is (= :variable (tipster/term-type var-term)))
+      (is (= :variable (terms/term-type var-term)))
       (is (= "X" (:name var-term)))
       
-      (is (= :compound (tipster/term-type list-term)))
+      (is (= :compound (terms/term-type list-term)))
       (is (= 'f (:functor list-term)))
       (is (= 2 (count (:args list-term))))
       
-      (is (= :compound (tipster/term-type vector-term)))
+      (is (= :compound (terms/term-type vector-term)))
       (is (= 'vector (:functor vector-term))))))
 
 (deftest test-tipster-to-clojure-conversion
   (testing "Преобразование термов Tipster в Clojure-данные"
-    (let [atom-term (tipster/make-atom 'hello)
-          var-term (tipster/make-variable "X")
-          compound-term (tipster/make-compound 'f 'a 'b)
-          bindings (tipster/empty-bindings)]
+    (let [atom-term (terms/make-atom 'hello)
+          var-term (terms/make-variable "X")
+          compound-term (terms/make-compound 'f 'a 'b)
+          bindings (bindings/empty-bindings)]
       
-      (is (= 'hello (tipster/tipster-term->clojure-term atom-term bindings)))
-      (is (= '?X (tipster/tipster-term->clojure-term var-term bindings)))
-      (is (= '(f a b) (tipster/tipster-term->clojure-term compound-term bindings))))))
+      (is (= 'hello (terms/tipster-term->clojure-term atom-term bindings bindings/deref-term)))
+      (is (= '?X (terms/tipster-term->clojure-term var-term bindings bindings/deref-term)))
+      (is (= '(f a b) (terms/tipster-term->clojure-term compound-term bindings bindings/deref-term))))))
 
 ;; === ТЕСТЫ МАКРОСОВ ===
 
@@ -280,11 +285,11 @@
     
     (tipster/deffact (human alice))
     
-    (let [kb @tipster/knowledge-base
+    (let [kb @knowledge/knowledge-base
           facts (:facts kb)]
       (is (= 1 (count facts)))
       (let [fact (first facts)]
-        (is (= :compound (tipster/term-type fact)))
+        (is (= :compound (terms/term-type fact)))
         (is (= 'human (:functor fact)))
         (is (= 1 (count (:args fact))))))))
 
@@ -333,12 +338,12 @@
     
     ;; Добавляем много фактов
     (doseq [i (range 100)]
-      (tipster/add-fact! (tipster/make-compound 'number i)))
+      (knowledge/add-fact! (terms/make-compound 'number i)))
     
     ;; Запрос должен найти все факты
-    (let [var (tipster/make-variable "X")
-          query (tipster/make-compound 'number var)
-          solutions (tipster/solve-goal query)]
+    (let [var (terms/make-variable "X")
+          query (terms/make-compound 'number var)
+          solutions (solver/solve-goal query)]
       
       (is (= 100 (count solutions))))))
 

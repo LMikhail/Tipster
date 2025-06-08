@@ -1,22 +1,27 @@
 (ns tipster.bench
   (:require [criterium.core :as criterium]
-            [tipster.core :as tipster]))
+            [tipster.core :as tipster]
+            [tipster.terms :as terms]
+            [tipster.bindings :as bindings]
+            [tipster.unification :as unif]
+            [tipster.knowledge :as knowledge]
+            [tipster.solver :as solver]))
 
 (defn benchmark-unification []
   "Бенчмарк унификации термов"
   (println "\n=== Benchmarking Unification ===")
   
-  (let [var-x (tipster/make-variable "X")
-        var-y (tipster/make-variable "Y")
-        atom-a (tipster/make-atom 'a)
-        compound1 (tipster/make-compound 'f var-x 'b)
-        compound2 (tipster/make-compound 'f 'a var-y)]
+  (let [var-x (terms/make-variable "X")
+        var-y (terms/make-variable "Y")
+        atom-a (terms/make-atom 'a)
+        compound1 (terms/make-compound 'f var-x 'b)
+        compound2 (terms/make-compound 'f 'a var-y)]
     
     (println "\nVariable-Atom unification:")
-    (criterium/quick-bench (tipster/unify var-x atom-a))
+    (criterium/quick-bench (unif/unify var-x atom-a))
     
     (println "\nCompound terms unification:")
-    (criterium/quick-bench (tipster/unify compound1 compound2))))
+    (criterium/quick-bench (unif/unify compound1 compound2))))
 
 (defn benchmark-fact-solving []
   "Бенчмарк решения фактов"
@@ -26,13 +31,13 @@
   
   ;; Добавляем факты
   (doseq [i (range 100)]
-    (tipster/add-fact! (tipster/make-compound 'number i)))
+    (knowledge/add-fact! (terms/make-compound 'number i)))
   
-  (let [var (tipster/make-variable "X")
-        query (tipster/make-compound 'number var)]
+  (let [var (terms/make-variable "X")
+        query (terms/make-compound 'number var)]
     
     (println "\nSolving query with 100 facts:")
-    (criterium/quick-bench (doall (tipster/solve-goal query)))))
+    (criterium/quick-bench (doall (solver/solve-goal query)))))
 
 (defn benchmark-rule-solving []
   "Бенчмарк решения правил"
@@ -41,41 +46,41 @@
   (tipster/reset-tipster!)
   
   ;; Семейные отношения
-  (tipster/add-fact! (tipster/make-compound 'родитель 'алиса 'боб))
-  (tipster/add-fact! (tipster/make-compound 'родитель 'боб 'чарли))
-  (tipster/add-fact! (tipster/make-compound 'родитель 'чарли 'дэвид))
+  (knowledge/add-fact! (terms/make-compound 'родитель 'алиса 'боб))
+  (knowledge/add-fact! (terms/make-compound 'родитель 'боб 'чарли))
+  (knowledge/add-fact! (terms/make-compound 'родитель 'чарли 'дэвид))
   
-  (tipster/add-rule! 
-    (tipster/make-compound 'дедушка (tipster/make-variable "X") (tipster/make-variable "Z"))
-    [(tipster/make-compound 'родитель (tipster/make-variable "X") (tipster/make-variable "Y"))
-     (tipster/make-compound 'родитель (tipster/make-variable "Y") (tipster/make-variable "Z"))])
+  (knowledge/add-rule! 
+    (terms/make-compound 'дедушка (terms/make-variable "X") (terms/make-variable "Z"))
+    [(terms/make-compound 'родитель (terms/make-variable "X") (terms/make-variable "Y"))
+     (terms/make-compound 'родитель (terms/make-variable "Y") (terms/make-variable "Z"))])
   
-  (let [var-x (tipster/make-variable "X")
-        var-z (tipster/make-variable "Z")
-        query (tipster/make-compound 'дедушка var-x var-z)]
+  (let [var-x (terms/make-variable "X")
+        var-z (terms/make-variable "Z")
+        query (terms/make-compound 'дедушка var-x var-z)]
     
     (println "\nSolving rule-based query:")
-    (criterium/quick-bench (doall (tipster/solve-goal query)))))
+    (criterium/quick-bench (doall (solver/solve-goal query)))))
 
 (defn benchmark-complex-terms []
   "Бенчмарк сложных структур"
   (println "\n=== Benchmarking Complex Terms ===")
   
   (let [deep-term (reduce (fn [acc i]
-                            (tipster/make-compound 'f acc i))
-                          (tipster/make-atom 'base)
+                            (terms/make-compound 'f acc i))
+                          (terms/make-atom 'base)
                           (range 10))
-        var (tipster/make-variable "X")]
+        var (terms/make-variable "X")]
     
     (println "\nCreating deep compound terms:")
     (criterium/quick-bench 
       (reduce (fn [acc i]
-                (tipster/make-compound 'f acc i))
-              (tipster/make-atom 'base)
+                (terms/make-compound 'f acc i))
+              (terms/make-atom 'base)
               (range 10)))
     
     (println "\nUnifying with deep compound terms:")
-    (criterium/quick-bench (tipster/unify deep-term var))))
+    (criterium/quick-bench (unif/unify deep-term var))))
 
 (defn benchmark-macro-performance []
   "Бенчмарк производительности макросов"
