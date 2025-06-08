@@ -1,20 +1,29 @@
 (ns animals
-  (:require [tipster.core :as tipster]))
+  (:require [tipster.core :as tipster]
+            [tipster.i18n :as i18n]))
 
 (defn description
-  "Возвращает описание примера"
-  []
-  {:title "🐱 Пример 4: Классификация животных"
-   :subtitle "Изучаем систему классификации"
-   :what-you-learn ["Построение систем классификации"
-                    "Иерархические правила"
-                    "Автоматическая категоризация"
-                    "Системы экспертных знаний"]
-   :next "./scripts/run-example.sh math"})
+  "Example description / Возвращает описание примера"
+  [& {:keys [lang] :or {lang (i18n/detect-language)}}]
+  (case lang
+    :ru {:title "🐱 Пример 4: Классификация животных"
+         :subtitle "Изучаем систему классификации"
+         :what-you-learn ["Построение систем классификации"
+                          "Иерархические правила"
+                          "Автоматическая категоризация"
+                          "Системы экспертных знаний"]
+         :next "./scripts/run-example.sh math"}
+    :en {:title "🐱 Example 4: Animal Classification"
+         :subtitle "Learning classification systems"
+         :what-you-learn ["Building classification systems"
+                          "Hierarchical rules"
+                          "Automatic categorization"
+                          "Expert knowledge systems"]
+         :next "./scripts/run-example.sh math"}))
 
 (defn run-example
-  "Запуск примера классификации животных"
-  []
+  "Run animal classification example / Запуск примера классификации животных"
+  [& {:keys [lang] :or {lang (i18n/detect-language)}}]
   (println "\n🔹 Пример 4: Классификация животных")
   (println (apply str (repeat 50 "=")))
   

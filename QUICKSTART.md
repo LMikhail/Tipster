@@ -1,125 +1,222 @@
-# 🚀 Быстрый старт Tipster
+# Tipster - Quick Start 🚀
 
-**Tipster** - это логический движок для Clojure, который позволяет использовать логическое программирование прямо в вашем коде!
+Welcome to the world of logic programming with Tipster! This guide will help you learn facts, rules, and queries in just 10 minutes.
 
-## ⚡ Запуск за 30 секунд
+## 🎯 What You'll Learn
 
-1. **Клонируйте репозиторий:**
-   ```bash
-   git clone <repository-url>
-   cd tipster
-   ```
+- Logic programming fundamentals
+- Creating facts and rules
+- Queries with variables
+- Practical application examples
 
-2. **Запустите все примеры:**
-   ```bash
-   ./scripts/examples.sh
-   ```
+## 📋 Requirements
 
-3. **Готово!** Вы увидите примеры работы логического движка.
+- Java 8+ 
+- Clojure 1.11+
+- Git (for cloning)
 
-## 🎯 Что это дает?
-
-Tipster позволяет вам писать код в декларативном стиле:
-
-```clojure
-;; Определяем факты
-(deffact (человек алиса))
-(deffact (родитель алиса боб))
-
-;; Определяем правила
-(defrule (дедушка ?X ?Z) 
-         [(родитель ?X ?Y) (родитель ?Y ?Z) (мужчина ?X)])
-
-;; Делаем запросы - система сама найдет ответы!
-(query (дедушка ?X ?Y))  ; Кто дедушка?
-```
-
-## 📚 Пошаговое изучение
-
-### Шаг 1: Основы
-```bash
-./scripts/examples/basic.sh
-```
-Изучите факты и простые запросы.
-
-### Шаг 2: Отношения  
-```bash
-./scripts/examples/family.sh
-```
-Узнайте как моделировать связи между данными.
-
-### Шаг 3: Правила (🔥 САМОЕ ВАЖНОЕ!)
-```bash
-./scripts/examples/rules.sh
-```
-Освойте логический вывод - главную мощь системы.
-
-### Шаг 4: Классификация
-```bash
-./scripts/examples/animals.sh
-```
-Построите экспертную систему классификации.
-
-### Шаг 5: Математика
-```bash
-./scripts/examples/math.sh
-```
-Поработайте с числовыми отношениями.
-
-### Шаг 6: Продвинутое
-```bash
-./scripts/examples/interactive.sh
-```
-Создайте сложную базу знаний.
-
-## 🧪 Экспериментирование
-
-После изучения примеров, поэкспериментируйте в интерактивном режиме:
+## ⚡ Quick Installation
 
 ```bash
-./scripts/repl.sh
+# Clone the repository
+git clone <repository-url>
+cd tipster
+
+# Run your first example
+./scripts/run-example.sh basic
 ```
 
-В REPL попробуйте:
-```clojure
-(require '[tipster.core :as t])
-(t/reset-tipster!)
-(t/deffact (мой-факт значение))
-(t/query (мой-факт ?X))
+## 🔹 Step 1: First Facts
+
+Open REPL:
+
+```bash
+clj
 ```
 
-## 🎓 Для кого это?
+Create facts about people:
 
-- **Новички в логическом программировании** - начните с примеров
-- **Разработчики Clojure** - добавьте логику в свои проекты  
-- **Исследователи ИИ** - создавайте экспертные системы
-- **Студенты** - изучайте формальную логику на практике
-
-## 📖 Углубленное изучение
-
-- **Подробные примеры:** `examples/README.md`
-- **Документация:** `src/tipster/TIPSTER_README_RU.md`
-- **Исходный код:** `src/tipster/`
-
-## 🚀 Интеграция в проекты
-
-Добавьте в `deps.edn`:
-```clojure
-{:deps {tipster {:local/root "."}}}
-```
-
-Используйте в коде:
 ```clojure
 (require '[tipster.core :as tipster])
 
+;; Clear the system
 (tipster/reset-tipster!)
-(tipster/deffact (пользователь "ivan" :активен))
-(tipster/defrule (премиум-пользователь ?user) 
-                 [(пользователь ?user :активен) 
-                  (подписка ?user :премиум)])
-(tipster/query (премиум-пользователь ?who))
+
+;; Add facts
+(tipster/deffact (person alice))
+(tipster/deffact (person bob))
+(tipster/deffact (profession alice programmer))
 ```
+
+## 🔍 Step 2: First Queries
+
+Now let's query the system:
+
+```clojure
+;; Who is a person?
+(tipster/query (person ?X))
+;; => ((person alice) (person bob))
+
+;; What's Alice's profession?
+(tipster/query (profession alice ?Profession))
+;; => ((profession alice programmer))
+```
+
+## ⚖️ Step 3: Logical Inference Rules
+
+Create a rule:
+
+```clojure
+;; If someone is a person and has a profession, then they work
+(tipster/defrule (works ?X) 
+                 [(person ?X) (profession ?X ?Prof)])
+
+;; Test the rule
+(tipster/query (works ?Who))
+;; => ((works alice))
+```
+
+## 👨‍👩‍👧‍👦 Step 4: Family Relationships
+
+Create a family relationship system:
+
+```clojure
+(tipster/reset-tipster!)
+
+;; Family facts
+(tipster/deffact (parent alice bob))
+(tipster/deffact (parent bob charlie))
+(tipster/deffact (male bob))
+(tipster/deffact (female alice))
+
+;; Rule: grandfather
+(tipster/defrule (grandfather ?X ?Z) 
+                 [(parent ?X ?Y) (parent ?Y ?Z) (male ?X)])
+
+;; Who is a grandfather?
+(tipster/query (grandfather ?Who ?ToWhom))
+```
+
+## 🎮 Step 5: Interactive Examples
+
+Try the ready-made examples:
+
+```bash
+# Basics
+./scripts/run-example.sh basic
+
+# Family relationships
+./scripts/run-example.sh family
+
+# Rules and inference
+./scripts/run-example.sh rules
+
+# Animal classification
+./scripts/run-example.sh animals
+
+# Mathematical relations
+./scripts/run-example.sh math
+
+# Interactive mode
+./scripts/run-example.sh interactive
+
+# All examples in sequence
+./scripts/run-example.sh all
+```
+
+## 🧪 Step 6: Testing
+
+Make sure everything works:
+
+```bash
+# Run all tests
+clj -M:test
+
+# Tests in Russian
+clj -M:test -e "(require '[tipster.all-tests :as t]) (t/run-all-tipster-tests :lang :ru)"
+
+# Quick tests
+clj -M:test -e "(require '[tipster.all-tests :as t]) (t/run-quick-tests)"
+```
+
+## 💡 Core Concepts
+
+### 📝 Facts
+Simple statements about the world:
+```clojure
+(tipster/deffact (person alice))
+(tipster/deffact (likes alice programming))
+```
+
+### ⚖️ Rules
+Logical inferences:
+```clojure
+(tipster/defrule (happy ?X) 
+                 [(person ?X) (likes ?X programming)])
+```
+
+### ❓ Queries
+Questions with variables:
+```clojure
+(tipster/query (happy ?Who))  ; Who is happy?
+```
+
+### 🔗 Unification
+Pattern matching:
+```clojure
+(tipster/query (likes ?Who programming))  ; Who likes programming?
+```
+
+## 🎯 Practical Applications
+
+### Expert Systems
+```clojure
+;; Medical diagnosis
+(tipster/deffact (symptom patient1 fever))
+(tipster/deffact (symptom patient1 cough))
+(tipster/defrule (diagnosis ?P cold) 
+                 [(symptom ?P fever) (symptom ?P cough)])
+```
+
+### Recommendation Systems
+```clojure
+;; Movie recommendations
+(tipster/deffact (likes user1 sci-fi))
+(tipster/deffact (genre movie1 sci-fi))
+(tipster/defrule (recommend ?U ?M) 
+                 [(likes ?U ?G) (genre ?M ?G)])
+```
+
+### Planning
+```clojure
+;; Task planning
+(tipster/deffact (depends task2 task1))
+(tipster/defrule (execute-first ?T1) 
+                 [(depends ?T2 ?T1)])
+```
+
+## 🚀 Next Steps
+
+1. **Study examples**: `./scripts/run-example.sh list`
+2. **Read documentation**: `examples/README.md`
+3. **Explore source code**: `src/tipster/`
+4. **Join community**: Contribute to the project!
+
+## 🌍 Language Support
+
+This guide is available in multiple languages:
+- **English**: `QUICKSTART.md` (you're reading it)
+- **Russian**: `ru/QUICKSTART.md`
+
+All examples and tests support both languages via `--lang ru` parameter.
+
+## 🤝 Need Help?
+
+- **Examples guide**: `examples/README.md`
+- **Testing guide**: `test/TESTING.md`
+- **Russian documentation**: `ru/` directory
+- **Source code**: `src/tipster/`
 
 ---
 
-**Начните прямо сейчас: `./scripts/examples.sh` 🚀** 
+**Start right now: `./scripts/run-example.sh all` 🚀**

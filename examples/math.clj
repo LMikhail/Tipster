@@ -1,20 +1,29 @@
 (ns math
-  (:require [tipster.core :as tipster]))
+  (:require [tipster.core :as tipster]
+            [tipster.i18n :as i18n]))
 
 (defn description
-  "Возвращает описание примера"
-  []
-  {:title "🔢 Пример 5: Математические отношения"
-   :subtitle "Изучаем числовую логику"
-   :what-you-learn ["Работа с числовыми данными"
-                    "Математические отношения"
-                    "Правила классификации чисел"
-                    "Логические вычисления"]
-   :next "./scripts/run-example.sh interactive"})
+  "Example description / Возвращает описание примера"
+  [& {:keys [lang] :or {lang (i18n/detect-language)}}]
+  (case lang
+    :ru {:title "🔢 Пример 5: Математические отношения"
+         :subtitle "Изучаем числовую логику"
+         :what-you-learn ["Работа с числовыми данными"
+                          "Математические отношения"
+                          "Правила классификации чисел"
+                          "Логические вычисления"]
+         :next "./scripts/run-example.sh interactive"}
+    :en {:title "🔢 Example 5: Mathematical Relations"
+         :subtitle "Learning numerical logic"
+         :what-you-learn ["Working with numerical data"
+                          "Mathematical relationships"
+                          "Number classification rules"
+                          "Logical computations"]
+         :next "./scripts/run-example.sh interactive"}))
 
 (defn run-example
-  "Запуск математического примера"
-  []
+  "Run mathematical example / Запуск математического примера"
+  [& {:keys [lang] :or {lang (i18n/detect-language)}}]
   (println "\n🔹 Пример 5: Математические отношения")
   (println (apply str (repeat 50 "=")))
   

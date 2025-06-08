@@ -1,20 +1,29 @@
 (ns interactive
-  (:require [tipster.core :as tipster]))
+  (:require [tipster.core :as tipster]
+            [tipster.i18n :as i18n]))
 
 (defn description
-  "Возвращает описание примера"
-  []
-  {:title "🎓 Пример 6: Интерактивный режим"
-   :subtitle "Изучаем сложные системы знаний"
-   :what-you-learn ["Сложные базы знаний"
-                    "Многоуровневые запросы"
-                    "Практические применения"
-                    "Готовность к созданию собственных систем"]
-   :next "./scripts/repl.sh"})
+  "Example description / Возвращает описание примера"
+  [& {:keys [lang] :or {lang (i18n/detect-language)}}]
+  (case lang
+    :ru {:title "🎓 Пример 6: Интерактивный режим"
+         :subtitle "Изучаем сложные системы знаний"
+         :what-you-learn ["Сложные базы знаний"
+                          "Многоуровневые запросы"
+                          "Практические применения"
+                          "Готовность к созданию собственных систем"]
+         :next "./scripts/repl.sh"}
+    :en {:title "🎓 Example 6: Interactive Mode"
+         :subtitle "Learning complex knowledge systems"
+         :what-you-learn ["Complex knowledge bases"
+                          "Multi-level queries"
+                          "Practical applications"
+                          "Ready to create your own systems"]
+         :next "./scripts/repl.sh"}))
 
 (defn run-example
-  "Запуск интерактивного примера"
-  []
+  "Run interactive example / Запуск интерактивного примера"
+  [& {:keys [lang] :or {lang (i18n/detect-language)}}]
   (println "\n🔹 Пример 6: Интерактивный режим")
   (println (apply str (repeat 50 "=")))
   

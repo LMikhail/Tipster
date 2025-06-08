@@ -1,11 +1,25 @@
 (ns tipster.core-test
+  "Основные интеграционные тесты Tipster.
+   
+   Для запуска модульных тестов используйте:
+   (require '[tipster.all-tests :as tests])
+   (tests/run-all-tests)
+   
+   Отдельные модули:
+   (tests/run-module-tests \"terms\")
+   (tests/run-module-tests \"bindings\")
+   (tests/run-module-tests \"unification\")
+   (tests/run-module-tests \"knowledge\")
+   (tests/run-module-tests \"solver\")
+   (tests/run-module-tests \"integration\")"
   (:require [clojure.test :refer :all]
             [tipster.core :as tipster]
             [tipster.terms :as terms]
             [tipster.bindings :as bindings]
             [tipster.unification :as unif]
             [tipster.knowledge :as knowledge]
-            [tipster.solver :as solver]))
+            [tipster.solver :as solver]
+            [tipster.all-tests :as all-tests]))
 
 (defn reset-tipster-for-test! []
   "Сброс состояния Tipster перед каждым тестом"
@@ -349,4 +363,9 @@
 
 (defn run-tipster-tests []
   "Запуск всех тестов Tipster"
-  (run-tests 'tipster.core-test)) 
+  (println "🔄 Запуск основных интеграционных тестов...")
+  (run-tests 'tipster.core-test))
+
+(defn run-all-modular-tests []
+  "Запуск всех модульных тестов"
+  (all-tests/run-all-tipster-tests)) 

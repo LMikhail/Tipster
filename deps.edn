@@ -1,4 +1,6 @@
-{:paths ["src"]
+{:version "0.1.0"
+ :description "Logic Programming for Clojure - Basic Logic Engine (MVP)"
+ :paths ["src"]
  :deps  {org.clojure/clojure {:mvn/version "1.12.1"}}
  :aliases
  {:dev {:extra-paths ["dev" "test"]
