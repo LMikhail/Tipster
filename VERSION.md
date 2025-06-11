@@ -1,99 +1,124 @@
 # Tipster Version History
 
-## Current Version: 0.1.0 - Basic Logic Engine
+## Current Version: 0.0.3 - Early Development
 
 **Release Date:** January 2025  
-**Status:** MVP - Minimum Viable Product
+**Status:** Early Development - Basic Logic Foundation
 
-### What's Implemented (v0.1.0)
+### What's Implemented (v0.0.3)
 
-✅ **Core Logic Engine**
-- Term creation and unification algorithm
-- Variable binding system with occurs check
-- Basic knowledge base (in-memory facts and rules)
-- Query system with pattern matching
+✅ **Basic Logic Engine**
+- Simple term creation and unification algorithm
+- Basic variable binding system with occurs check
+- Minimal knowledge base (in-memory facts and rules)
+- Simple query system with pattern matching
 - Bilingual support (English/Russian)
 
 ✅ **Developer Experience**
 - 6 interactive examples (basic, family, rules, animals, math, interactive)
-- Comprehensive test suite (60 tests, 177 assertions)
+- Basic test suite covering core functionality
 - REPL-friendly development
-- Modular architecture
+- Modular architecture foundation
 
 ✅ **Infrastructure**
 - Internationalization system
-- Bilingual documentation
+- Bilingual documentation structure
 - Example runner scripts
-- Testing framework
+- Basic testing framework
 
 ### Current Limitations
 
-⚠️ **Limited Rule Engine**
-- Simple rules only, complex inference chains have limitations
+⚠️ **Early Development Stage**
+- Basic logic engine, not production-ready
+- Simple rules only, limited inference capabilities
 - No advanced backtracking or constraint solving
-- Missing optimization for large knowledge bases
+- Missing optimization for larger knowledge bases
 
 ⚠️ **No Persistence**
 - In-memory only, no database integration
 - No transaction support or ACID properties
 - No distributed capabilities
 
-⚠️ **Basic Query System**
-- Simple pattern matching only
-- No advanced query optimization
-- No aggregation or analytical queries
+⚠️ **Temporary Constructs**
+- `deffact`/`defrule`/`query` macros are temporary
+- No dual semantics implementation yet
+- Limited query capabilities
 
 ---
 
 ## Roadmap to Full Vision
 
-### Version 0.2.0 - Enhanced Logic Engine (Q2 2025)
-- Advanced rule engine with full backtracking
-- Constraint logic programming (CLP) support
-- Query optimization and indexing
-- Performance improvements for large knowledge bases
+### Version 0.1.0 - MVP Logic Engine (Q1 2025)
+- Complete unification algorithm implementation
+- Robust variable binding system
+- Comprehensive knowledge base
+- Advanced pattern matching
+- Stable API foundation
+- Complete test coverage
 
-### Version 0.3.0 - Persistence Layer (Q3 2025)
+### Version 0.2.0 - Dual Semantics (Q2 2025)
+- Universal combinatorial search engines
+- Modular search strategies (backtrack, heuristic, breadth-first)
+- True dual semantics without special macros
+- Natural aggregations from logical inference
+- Unified knowledge space foundation
+
+### Version 0.3.0 - Unified Knowledge Space (Q3 2025)
 - PKVT (Parent-Key-Value-Type) storage model
-- SQLite integration for persistence
-- Transaction support and data integrity
-- Import/export functionality
+- Unified knowledge space for facts, rules, functions, data
+- Transparent external data integration
+- Distributed combinatorial machines
+- Performance optimization (1B+ objects)
 
-### Version 0.4.0 - Advanced Query System (Q4 2025)
-- SQL-like query syntax
-- Aggregation and analytical functions
-- Query planner and optimizer
-- View and materialized view support
+### Version 0.4.0 - Dual Semantics Query System (Q4 2025)
+- Natural joins through unification
+- Aggregations emerging from logical inference
+- Universal search patterns
+- Query optimization through combinatorial machines
 
-### Version 1.0.0 - Full Platform (2026)
-- Runtime server with REST API
-- Multi-database support (PostgreSQL, NoSQL)
-- Distributed knowledge base
-- Web-based administration interface
-- Full CRUD operations via API
+### Version 1.0.0 - Enterprise Platform (2026)
+- Production-ready platform
+- Web interface and REST API
+- Enterprise security and monitoring
+- Complete ecosystem and integrations
+- Comprehensive documentation
 
-### Version 2.0.0 - Enterprise Features (Future)
-- Horizontal scaling and clustering
+### Version 2.0.0 - Universal Knowledge Platform (Future)
+- Advanced distributed capabilities
 - Real-time streaming and event processing
-- Advanced analytics and reporting
-- Integration with external systems
-- ISO 9001:2015 documentation generation
+- AI/ML integration
+- Industry-specific solutions
+- Global community ecosystem
 
 ---
 
 ## Version Compatibility
 
-- **v0.1.x**: Basic API, expect breaking changes
-- **v0.2.x**: Stabilizing core API
+- **v0.0.x**: Early development, expect breaking changes
+- **v0.1.x**: MVP API, stabilizing core features
+- **v0.2.x**: Dual semantics API, major architectural changes
 - **v1.0.x**: Stable API, backward compatibility guaranteed
 - **v2.0.x**: Enterprise-grade, full feature set
+
+---
+
+## Architecture Evolution
+
+The project follows a clear evolution path:
+
+1. **v0.0.x**: Basic logic programming foundation
+2. **v0.1.x**: Complete logic engine MVP
+3. **v0.2.x**: Innovative dual semantics
+4. **v0.3.x**: Unified knowledge space (PKVT)
+5. **v1.0.x**: Enterprise-ready platform
+6. **v2.0.x**: Universal knowledge platform
 
 ---
 
 ## Full Vision Reference
 
 For the complete vision and architectural description, see:
-- **English**: [docs/eng/general_description.md](docs/eng/general_description.md)
-- **Russian**: [docs/ru/general_description_ru.md](docs/ru/general_description_ru.md)
+- **English**: [docs/en/general_description.md](docs/en/general_description.md) | [docs/en/architecture.md](docs/en/architecture.md) | [docs/en/roadmap.md](docs/en/roadmap.md)
+- **Russian**: [docs/ru/general_description.md](docs/ru/general_description.md) | [docs/ru/architecture.md](docs/ru/architecture.md) | [docs/ru/roadmap.md](docs/ru/roadmap.md)
 
-The current implementation (v0.1.0) is the first step toward this ambitious goal. 
+The current implementation (v0.0.3) is the first step toward this ambitious goal. 

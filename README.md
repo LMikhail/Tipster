@@ -1,43 +1,66 @@
-# Tipster — A Functional-Logical Programming Language and Universal DBMS
+# Tipster — Functional-Logical Programming Language with Dual Semantics
 
-[![Clojure](https://img.shields.io/badge/Clojure-1.11+-blue.svg)](https://clojure.org/)
+[![Clojure](https://img.shields.io/badge/Clojure-1.12+-blue.svg)](https://clojure.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-0.1.0-orange.svg)](VERSION.md)
+[![Version](https://img.shields.io/badge/Version-0.0.3--dev-orange.svg)](docs/en/roadmap.md)
 
 ---
 
-**Tipster** is a next-generation language and open programming environment that combines the declarative power of logic programming languages (in the spirit of Prolog) with the flexibility and expressiveness of Clojure/EDN. The project is being developed as a universal open-source platform for building complex business systems, modern web services, expert and intelligent systems on a unified technological foundation.
+**Tipster** is an innovative programming language that unifies functional and logical programming through **dual semantics**. Every expression can be both a computation (like Clojure) and a logical fact (like Prolog), enabling flexible development of intelligent systems, knowledge bases, and complex business logic.
 
-## 🚨 Current Status: v0.1.0 - MVP Logic Engine
+## 🎯 What Makes Tipster Unique?
 
-**This is the first working release** of the ambitious Tipster vision. While the current implementation provides a solid foundation for logic programming in Clojure, it represents the initial step toward the full platform described in our [documentation](docs/eng/general_description.md).
+**Dual Semantics Innovation:**
+```clojure
+;; Same expression, dual interpretation:
+(employee "John" 30 "IT" 75000)
 
-**✅ What works now (v0.1.0):**
-- Core logic engine with unification and variable binding
-- Basic facts, rules, and queries with pattern matching  
-- 6 interactive examples demonstrating key concepts
-- Comprehensive test suite (60 tests, 177 assertions)
+;; As function (computational semantics):
+(employee "John" 30 "IT" 75000)  ; → creates employee record
+
+;; As logical pattern (logical semantics):
+(employee ?name ?age "IT" ?salary)  ; → finds all IT employees
+
+;; Combined power:
+(->> (employee ?name ?age "IT" ?salary)
+     (filter #(> (:age %) 25))
+     (map #(calculate-bonus (:salary %))))
+```
+
+**No artificial boundaries** between data, functions, rules, and queries — everything lives in a unified knowledge space.
+
+---
+
+## 🚨 Current Status: v0.0.3 - Early Development
+
+**This is early development stage** implementing basic logical inference capabilities. The current version provides initial foundation for logic programming, with v0.1.0 MVP and full dual semantics vision coming in future releases.
+
+**✅ What works now (v0.0.3):**
+- Core unification algorithm with occurs check
+- Variable binding and logical inference
+- Facts, rules, and pattern matching queries
+- 6 interactive examples with comprehensive documentation
 - Full bilingual support (English/Russian)
 - REPL-friendly development environment
 
-**🚀 Full vision roadmap:** See [VERSION.md](VERSION.md) for detailed development plans through v2.0.0.
+**🚀 Full vision roadmap:** [docs/en/roadmap.md](docs/en/roadmap.md) | [docs/ru/roadmap.md](docs/ru/roadmap.md)
 
 ---
 
-## 🌍 Language Support
+## 🌍 Bilingual Project
 
-This project supports both **English** (default) and **Russian**:
+Full support for **English** and **Russian**:
 
-- **English documentation**: You're reading it! 🇺🇸
-- **Русская документация**: [ru/README.md](ru/README.md) 🇷🇺
+- **English**: You're reading it! 🇺🇸  
+- **Русский**: [ru/README.md](ru/README.md) 🇷🇺
 
-Use `--lang ru` flag for Russian interface in examples and tools.
+Use `--lang ru` for Russian interface in all tools.
 
 ---
 
 ## 🚀 Quick Start (30 seconds)
 
-**New to logic programming?** Jump right in:
+**Experience logic programming capabilities:**
 
 ```bash
 git clone <this-repo>
@@ -45,147 +68,198 @@ cd tipster
 ./start.sh
 ```
 
-This runs interactive examples showing facts, queries, and logical rules in action!
+This launches interactive examples showing logical inference in action!
 
-**For step-by-step learning:**
-- English: `cat examples/README.md`
-- Russian: `cat ru/QUICKSTART.md` 
-
----
-
-## Why Tipster?
-
-Tipster was born out of a real engineering need — automating and integrating diverse business processes and accounting systems in a large enterprise with many subsystems. It solves the conceptual problems of automation and lets you focus on business logic itself, not on "gluing together" incompatible solutions.
-
-**Tipster's core principles:**
-
-* Preserves the full functionality of Clojure and its standard library.
-* Allows you to create logic rules and knowledge bases using native EDN/Clojure syntax.
-* Makes logic inference, knowledge management, and data operations "first-class citizens" of the ecosystem.
+**Step-by-step learning:**
+- English: [examples/README.md](examples/README.md)
+- Russian: [ru/QUICKSTART.md](ru/QUICKSTART.md)
 
 ---
 
-## Key Features
+## 💡 Why Tipster?
 
-* **Dual Semantics:** Every expression can be both a computation (as in Clojure) and a logical fact (as in Prolog).
-* **Unified Syntax** for logic and functional tasks: no need to write a separate DSL for logic.
-* **Seamless integration with Clojure/JVM:** Use any existing libraries and tools.
-* **Flexible Architecture:** Works as in-memory for prototyping and REPL, as well as with external databases for enterprise tasks (future versions).
-* **No "impedance mismatch":** Database operations are as close as possible to the logic of the language, with no bulky ORMs or intermediate layers.
-* **Scalability:** Suitable for small projects as well as distributed systems with large knowledge bases.
+Born from real enterprise needs — integrating diverse business systems and automating complex processes. Tipster eliminates the "impedance mismatch" between different programming paradigms and data models.
 
-**Future features (roadmap):**
-* **Powerful runtime DBMS:** Knowledge storage and search based on the 4-tuple model (Parent-Key-Value-Type, PKVT) - *v0.3.0+*
-* **Advanced query system:** SQL-like syntax with optimization - *v0.4.0+*
-* **REST API and web interface:** Full platform capabilities - *v1.0.0+*
+**Core Philosophy:**
+- **Unified Knowledge Space**: Facts, rules, functions, and data coexist naturally
+- **Dual Semantics**: Every expression works as both computation and logical pattern
+- **Zero Friction**: Native Clojure syntax, no DSLs or ORMs
+- **Seamless Integration**: Full JVM ecosystem compatibility
 
 ---
 
-## Code Example (Current v0.1.0)
+## 🎨 Key Features
+
+### 🔄 Dual Semantics
+Every predicate expression serves dual purposes without special syntax:
+```clojure
+;; Define once, use everywhere:
+(defn customer [name id orders])
+
+;; Computational use:
+(customer "Alice" 123 [...])
+
+;; Logical queries:
+(customer ?name ?id ?orders)
+```
+
+### 🧠 Unified Knowledge Space (PKVT)
+All knowledge stored in Parent-Key-Value-Type tuples:
+```clojure
+{:parent "fact-1" :key "employee" :value ["John" 30 "IT"] :type :fact}
+{:parent "rule-1" :key "senior" :value "..." :type :rule}
+{:parent "fn-1" :key "bonus" :value "..." :type :function}
+```
+
+### 🔍 Universal Search
+Same combinatorial search engine for:
+- Logical inference
+- Data queries  
+- Function calls
+- Pattern matching
+
+### 🌐 Natural Aggregations
+Aggregations emerge naturally from logical inference:
+```clojure
+;; Logical inference finds solutions:
+(->> (employee ?name ?age ?dept ?salary)
+     (filter #(> (:age %) 30))
+     (group-by :dept)  ; Natural grouping
+     (map #(reduce + (map :salary %))))  ; Standard functions
+```
+
+---
+
+## 📝 Current Code Example (v0.0.3)
 
 ```clojure
-;; Facts
+;; Facts about family relationships
 (deffact (person alice))
+(deffact (person bob))
 (deffact (parent alice bob))
-(deffact (age alice 45))
 
-;; Rules
+;; Logical rules
 (defrule (grandparent ?X ?Z) 
          [(parent ?X ?Y) (parent ?Y ?Z)])
 
-;; Queries - system finds answers automatically!
-(query (person ?Who))        ; Find all persons
-(query (grandparent ?X ?Y))  ; Find grandparent relationships
+;; Queries - automatic logical inference!
+(query (person ?who))        ; → Find all persons
+(query (grandparent ?x ?y))  ; → Find grandparent relationships
 ```
 
-> **⚠️ Note:** The `deffact`, `defrule`, and `query` macros are **temporary constructs** introduced in v0.1.0 to simplify sequential logic development. In future versions, these will be removed in favor of full Clojure integration with **dual semantics**, where any predicate expression can serve as both computation and logical fact without special syntax.
-
-Queries to data and logic look the same — you always work with familiar Clojure/EDN syntax and get results as data structures.
+> **⚠️ Evolution Note:** The `deffact`/`defrule`/`query` macros are temporary v0.0.x constructs for early development. Starting v0.1.0 MVP, these will evolve toward dual semantics, with full implementation in v0.2.0+ where any expression naturally serves both computational and logical purposes.
 
 ---
 
-## 📚 Examples and Learning
+## 🎓 Learning & Examples
 
-**Interactive Examples:** Learn by doing with guided examples:
+**Interactive Learning:**
 ```bash
-./scripts/run-example.sh all    # All examples
-./scripts/run-example.sh basic  # Facts and queries
-./scripts/run-example.sh family # Family relationships
-./scripts/run-example.sh rules  # Logical inference
+./scripts/run-example.sh all     # Complete tour
+./scripts/run-example.sh basic   # Facts and queries
+./scripts/run-example.sh family  # Relationships
+./scripts/run-example.sh rules   # Logical inference
 ```
 
-**Experiment:** Use the interactive REPL:
+**Experimentation:**
 ```bash
-./scripts/repl.sh              # Interactive experimentation
+./scripts/repl.sh               # Interactive REPL
+./scripts/debug.sh              # Debug mode
 ```
 
-**Documentation:**
-- `examples/README.md` - Detailed examples guide
-- `ru/QUICKSTART.md` - Quick start in Russian
-- `src/tipster/` - Source code with documentation
+**Learning Resources:**
+- [examples/README.md](examples/README.md) - Comprehensive examples
+- [ru/QUICKSTART.md](ru/QUICKSTART.md) - Quick start guide (Russian)
 
 ---
 
-## Current Architecture (v0.1.0)
+## 🏗️ Architecture Evolution
 
-**What's implemented:**
-* **Core Logic Engine:** Unification algorithm, variable binding, basic knowledge base
-* **Query System:** Pattern matching and simple rule evaluation
-* **REPL Integration:** Interactive development and testing
-* **Bilingual Support:** English/Russian interface
+### Current (v0.0.3): Early Development
+- ✅ Basic unification algorithm
+- ✅ Simple variable binding  
+- ✅ Minimal knowledge base
+- ✅ Basic pattern matching
 
-**Future Architecture (Full Vision):**
-* **Tipster Compiler:** Parsing, analysis, and code generation for JVM/JS, REPL support, API, hot-reloading of knowledge
-* **Runtime Server:** Knowledge base (in-memory/persistent), logic engine, indexing, optimization, integration with external sources (SQL/NoSQL), visualization and audit tools
+### Near Future (v0.1.0): MVP Logic Foundation
+- 🚀 Complete unification algorithm
+- 🚀 Robust variable binding system
+- 🚀 Comprehensive knowledge base
+- 🚀 Advanced pattern matching
 
-See [VERSION.md](VERSION.md) for detailed roadmap.
+### Future (v0.2.0+): Dual Semantics
+- 🚀 Universal combinatorial search engines
+- 🚀 Modular search strategies (backtrack, heuristic, breadth-first)
+- 🚀 True dual semantics without special macros
 
----
-
-## Why Not Just Prolog or SQL?
-
-|                | Prolog    | SQL            | Tipster                    |
-| -------------- | --------- | -------------- | -------------------------- |
-| Paradigm       | Logic     | Declarative DB | Logic + Functional         |
-| Syntax         | Specific  | Tabular        | Clojure/EDN                |
-| Extensibility  | Difficult | Only via SQL   | JVM/JS/CLR, any libraries  |
-| I/O            | Limited   | DB-only        | Directly in the language   |
-| Modularity     | Primitive | DB Schemas     | Namespaces, modules        |
-| Learning curve | High      | Medium         | Low for Clojure developers |
-
-Tipster combines the advantages of all these worlds and minimizes their shortcomings.
+### Full Vision (v0.3.0+): Unified Knowledge Platform
+- 🌟 PKVT knowledge space (1B+ objects)
+- 🌟 Transparent external data integration
+- 🌟 Distributed combinatorial machines
+- 🌟 Enterprise-ready platform
 
 ---
 
-## Documentation
+## 🆚 Comparison
 
-* [**General Description and Architecture**](docs/eng/general_description.md)
-* [Code Examples](examples/)
-* [Version History and Roadmap](VERSION.md)
+|                    | Prolog      | SQL/NoSQL    | Tipster                |
+|--------------------|-------------|--------------|------------------------|
+| **Paradigm**       | Logic only  | Data only    | Logic + Functional     |
+| **Syntax**         | Prolog      | SQL/JSON     | Pure Clojure/EDN       |
+| **Data Model**     | Facts/Rules | Tables/Docs  | Unified PKVT Space     |
+| **Queries**        | Logic       | Declarative  | Dual Semantics         |
+| **Integration**    | Limited     | ORM/APIs     | Native JVM             |
+| **Aggregations**   | Manual      | Built-in     | Natural from inference |
+| **Learning Curve** | Steep       | Medium       | Gentle (if know Clojure)|
 
----
-
-## How to Contribute?
-
-The project is open to everyone:
-
-* Public repository with contributions via Pull Requests
-* Discussions, new modules and integrations are welcome!
-* Contributors help develop the standard library, tools, and drivers.
+**Tipster = Best of all worlds, unified.**
 
 ---
 
-## License
+## 📚 Documentation
 
-Tipster is released under the MIT license. All components and source code are freely available for use and modification.
+### English
+- [📖 General Description](docs/en/general_description.md) - Project overview and vision
+- [🏗️ Architecture](docs/en/architecture.md) - Technical deep dive
+- [🗺️ Roadmap](docs/en/roadmap.md) - Development plan
+- [💡 Examples](examples/README.md) - Hands-on learning
+
+### Русский  
+- [📖 Общее описание](docs/ru/general_description.md) - Обзор проекта и видение
+- [🏗️ Архитектура](docs/ru/architecture.md) - Техническое описание
+- [🗺️ Дорожная карта](docs/ru/roadmap.md) - План развития
+- [💡 Примеры](ru/QUICKSTART.md) - Практическое изучение
 
 ---
 
-## Contact & Support
+## 🤝 Contributing
 
-* Questions, suggestions, and bug reports — via [Issues](https://github.com/LMikhail/Tipster/issues)
-* For partnerships and large-scale deployments — contact via GitHub profile.
+**Open Source & Community Driven:**
+- 📝 Issues and discussions welcome
+- 🔧 Pull requests for features and fixes
+- 🌟 Help shape the future of programming languages
+- 📖 Documentation and examples contributions
+
+**Areas needing help:**
+- Core engine optimizations
+- Additional examples and tutorials
+- Integration adapters
+- Performance benchmarking
 
 ---
 
-> **Tipster** — your tool for flexible automation, building expert systems, and knowledge management for the 21st century!
+## 📄 License
+
+MIT License - freely use, modify, and distribute.
+
+---
+
+## 📞 Contact & Community
+
+- **Issues & Discussions**: [GitHub Issues](https://github.com/LMikhail/Tipster/issues)
+- **Enterprise & Partnerships**: Contact via GitHub profile
+- **Community**: Join the evolution in programming languages!
+
+---
+
+> **Tipster** — Where logic meets computation, and knowledge becomes code. 🚀
