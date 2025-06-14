@@ -22,7 +22,7 @@ Tipster is built on a **modular architecture** with clear separation of responsi
 
 | Block | Version | Status | Purpose |
 |-------|---------|--------|---------|
-| **Logic Engine** | v0.1.0 ✅ | Basic | Unification, facts, rules |
+| **Logic Engine** | v0.1.0 🚧 | In development | Unification, facts, rules |
 | **Unification Core** | v0.2.0 🚧 | In development | True unification and backtracking |
 | **PKVT Storage** | v0.3.0 📋 | Planned | Runtime-DBMS with universal model |
 | **Query Engine** | v0.4.0 📋 | Planned | SQL-like queries with optimization |
@@ -33,7 +33,7 @@ Tipster is built on a **modular architecture** with clear separation of responsi
 
 ---
 
-## 🧠 v0.1.0 - Logic Engine (Basic Logic Engine)
+## 🧠 v0.1.0 - Logic Engine (MVP Logic Engine) 🚧
 
 ### 📐 Architectural Decisions
 

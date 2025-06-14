@@ -1,4 +1,4 @@
-(ns tipster.bench
+(ns bench
   (:require [criterium.core :as criterium]
             [tipster.core :as tipster]
             [tipster.terms :as terms]
@@ -121,4 +121,4 @@
 
 (defn -main []
   "Точка входа для запуска бенчмарков"
-  (run-benchmarks {}))
+  (run-benchmarks {})) 
