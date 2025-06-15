@@ -2,15 +2,50 @@
 
 ## 1. Introduction
 
-This document lays the formal foundation for the core concepts of the Tipster project. Its purpose is to serve as a canonical source of truth, defining the system's fundamental building blocks with mathematical and semantic rigor.
+This document lays the formal foundation for the core concepts of the Tipster project. Its purpose is to serve as a canonical source, defining the system's fundamental building blocks with mathematical and semantic rigor.
 
 At the core of Tipster lies a **compiler** that translates high-level declarative code, written as a **seamless superset of Clojure**, into efficient executable code.
 
 ## 2. Basic Terminology and Term Structure
 
-(The sections "Basic Terminology: Atom and Symbol," "Term," and "Ground Term" remain unchanged as they define universal structural elements.)
+To avoid confusion arising at the intersection of logic programming (in the spirit of Prolog) and Clojure, it is necessary to clearly define the basic terms.
 
-...
+*   **Symbol:** In Clojure, a `Symbol` is an identifier that typically refers to something (e.g., a function or a variable). In Tipster, following this semantic, we use symbols to denote functors, variables, and other logical constructs. This concept is closest to what is called an **atom** in Prolog—a unique symbolic constant.
+
+*   **Atom:** In Clojure, an `Atom` is a specific reference data type used to manage synchronous, uncoordinated state changes. **This term is not used in Tipster documentation** to avoid confusion with its Prolog homonym. We use the term **Symbol** to denote symbolic constants.
+
+## 3. Term
+
+In Tipster, as in classical logic programming, a **term** is the basic data structure.
+
+### Term Structure
+
+Structurally, a term can be one of three things:
+
+1.  **Constant:** An immutable value. Constants can be:
+    *   **Symbols** (as previously defined, e.g., `some-name`)
+    *   Numbers (e.g., `42`)
+    *   Strings (e.g., `"hello"`)
+2.  **Variable:** An identifier that can be bound to another term during unification (e.g., `X`, `Person`).
+3.  **Compound Term:** A structure of the form `(f t₁ ... tₙ)`, where `f` is a name called a **functor**, and `t₁ ... tₙ` are terms that are its arguments (e.g., `(point X 1)`). A more rigorous definition of a functor, revealing its semantics in Tipster, is provided below.
+
+### Dual Semantics of a Term
+
+The key distinction and extension of the concept in Tipster lies in its **dual semantics**. Every term is a syntactic construct that can be subjected to two different but interconnected types of interpretation:
+
+1.  **Logical Interpretation ($Φ_L$)**: The term is treated as a **logical pattern** for unification and search. The interpretation $Φ_L(t, B) → S$ maps a term $t$ and a set of current variable bindings $B$ to a stream (possibly infinite) of solution sets $S$.
+2.  **Computational Interpretation ($Φ_C$)**: The term is treated as a **computational expression** to be executed. The interpretation $Φ_C(t, C) → v$ maps a term $t$ and a computation context $C$ to a single resulting value $v$.
+
+## 4. Ground Term
+
+**Definition:**
+
+A **Ground Term** is a term that **contains no variables**. It consists exclusively of functors and constants. Such terms represent concrete, fully defined data.
+
+*   **Examples of ground terms:** `42`, `"alice"`, `(location "Paris" "France")`.
+*   **Examples of non-ground terms** (containing variables): `X`, `(location City "France")`.
+
+Further in this document, when referring to "true terms" in the context of facts and predicates, we will specifically mean **ground terms**.
 
 ## 5. Defining Entities: `def` and `defn`
 
