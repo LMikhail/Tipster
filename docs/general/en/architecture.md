@@ -33,12 +33,12 @@ graph TD;
 
     F -- "Queries" --> E;
     G -- "Data" --> E;
-    E -- "1. Sends Goal" --> D;
-    D -- "2. Requests Execution Plan" --> H;
-    H -- "3. Builds & Returns<br/>Optimized Plan" --> D;
-    D -- "4. Executes Plan,<br/>Accessing KB" --> C;
-    C -- "5. Returns Data/Rules" --> D;
-    D -- "6. Returns Result" --> E;
+    E -- "(1) Sends Goal" --> D;
+    D -- "(2) Requests Execution Plan" --> H;
+    H -- "(3) Builds & Returns<br/>Optimized Plan" --> D;
+    D -- "(4) Executes Plan,<br/>Accessing KB" --> C;
+    C -- "(5) Returns Data/Rules" --> D;
+    D -- "(6) Returns Result" --> E;
     E -- "Results" --> F;
 
     classDef component fill:#f2f2f2,stroke:#333,stroke-width:2px;
