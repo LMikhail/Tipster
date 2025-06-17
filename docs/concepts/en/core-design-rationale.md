@@ -8,7 +8,8 @@
 | **`Symbol` over `Atom`** | Eliminates critical confusion with `clojure.core/Atom`. | Minor unfamiliarity for Prolog veterans. | `+` (Pragmatic and necessary) |
 | **Dual Semantics** | Unifies logic and computation in a single construct. | High cognitive load on the developer. | `++` (Risky, but the core innovation) |
 | **`def` vs. `defn`** | Clear semantic separation of data and logic. | Deviates from Prolog's purity, where a fact is a special case of a rule. | `+` (Improves readability) |
-| **`::l` Modifier** | Elegance and the ability to overload names. | Risk of accidental error (forgetting `::l`). | `~` (An elegant compromise) |
+| **`\|` Separator** | Best compromise: valid & visually clear. | Not a standard naming convention. | `+` (Pragmatic and clear) |
+| **`\|l` Modifier** | Elegance and the ability to overload names. | Risk of accidental error (forgetting `\|l`). | `~` (An elegant compromise) |
 | **Invocation Modifiers** | Maximum control and clarity of intent in the code. | Minor syntactic noise. | `++` (Key to flexibility) |
 | **Extensibility** | Ease of adding new evaluation strategies. | Potential for future language complexity. | `+` (Useful future-proofing) |
 
@@ -73,44 +74,53 @@ Below is a detailed description of each decision with the pros and cons briefly 
 
 *   **Departure from Prolog Purity:** In "pure" logic programming, facts and rules are merely special cases of the same concept—a predicate clause. This separation may seem artificial.
 
-### 5. The `::l` Modifier for Defining Rules
+### 5. Rationale for Choosing the `|` Separator
 
-**Concept:** A rule is distinguished from a function not by a new macro (`defrule`), but by the `::l` modifier on its definition: `(defn::l ...)`.
+**Concept:** A special separator symbol, `|` (pipe), was chosen to modify semantics, attached to the entity's name.
 
-#### Pros
+**Rationale:** An analysis of various symbols (`-`, `::`, `!`, `?`, `$` etc.) was conducted based on syntactic validity, visual clarity, and idiomatic conflicts.
+*   `::` and `^` proved to be syntactically invalid.
+*   `$` was syntactically the best option, but was rejected due to poor visual readability in text.
+*   `!`, `?`, and `%` have strong, conflicting meanings in Clojure.
+*   `-` is widely used in function and variable names, which would lead to ambiguity.
+*   `|` was chosen as the best compromise: it is valid, visually clear, and has minimal conflicts.
 
-*   **Elegance and Minimalism:** Allows for the reuse of the familiar `defn` macro. The `::l` annotation is a lightweight syntactic marker.
-*   **Name Overloading:** Makes it possible to define a rule and an optimized function with the same name, which is very convenient in practice.
+### 6. The `|l` Modifier for Defining Rules
 
-#### Cons
-
-*   **Potential for Accidental Errors:** A developer might forget to specify `::l` and accidentally define a regular function instead of a rule, leading to runtime errors rather than compile-time ones.
-*   **Unusual Syntax:** For those unfamiliar with Clojure, using keywords as annotations (`::l`) might seem strange.
-
-### 6. Explicit Invocation Modifiers (`::l`, `::f`, `::seq`)
-
-**Concept:** The semantics of an invocation (logical, functional) are determined by an explicit modifier on the caller's side.
+**Concept:** A rule is distinguished from a function not by a new macro (`defrule`), but by the `|l` modifier attached to `defn`: `(defn|l ...)`.
 
 #### Pros
 
-*   **Maximum Clarity and Control:** The calling code explicitly declares its intent, which eliminates all ambiguity.
-*   **Pragmatism of `::seq`:** The `::seq` modifier is an excellent pragmatic solution that materializes a lazy sequence of solutions into a regular Clojure collection, ready for further processing by standard functions.
-*   **Flexibility:** Allows for mixing paradigms in the most flexible way possible.
+*   **Elegance and Minimalism:** Allows for the reuse of the familiar `defn` macro.
+*   **Name Overloading:** Makes it possible to define a rule and an optimized function with the same name.
 
 #### Cons
 
-*   **Syntactic Noise:** In code with frequent switching between worlds, the abundance of modifiers can reduce readability.
-*   **Increased Developer Responsibility:** One must remember the modifiers and their application rules (e.g., that `::f` on a rule will return only one solution), which increases cognitive load.
+*   **Risk of Accidental Errors:** A developer might forget to specify `|l` and accidentally define a regular function instead of a rule.
+*   **Non-standard Syntax:** The `symbol|modifier` naming scheme is not a standard convention in Clojure.
 
-### 7. Extensibility via Modifiers
+### 7. Explicit Invocation Modifiers (`|l`, `|f`, `|seq`)
 
-**Concept:** The architecture allows for the easy addition of new modifiers (`::fl`, `::lf`) to implement mixed evaluation strategies.
+**Concept:** The semantics of an invocation (logical, functional) are determined by an explicit modifier on the caller's side: `(grandparent|l ...)`.
 
 #### Pros
 
-*   **Future-Proofing:** The system can be easily extended with new execution strategies without changing the base syntax of the language.
-*   **Powerful Metaprogramming Mechanism:** Opens up possibilities for users and framework developers to create their own custom invocation semantics.
+*   **Maximum Clarity and Control:** The calling code explicitly declares its intent.
+*   **Pragmatism of `|seq`:** The `|seq` modifier is a pragmatic solution that materializes a lazy sequence of solutions into a regular collection.
+*   **Flexibility:** Allows for mixing paradigms in a flexible way.
 
 #### Cons
 
-*   **Risk of Over-complexity:** A large number of modifiers could make the language difficult to learn and use. The semantics of their combinations could become non-obvious. 
+*   **Syntactic Noise:** An abundance of modifiers can reduce readability.
+*   **Increased Developer Responsibility:** One must remember the rules for applying modifiers.
+
+### 8. Extensibility via Modifiers
+
+**Concept:** The architecture allows for the easy addition of new modifiers (`|fl`, `|lf`) to implement mixed evaluation strategies.
+
+#### Pros
+*   **Future-Proofing:** The system can be easily extended with new execution strategies.
+*   **Powerful Metaprogramming Mechanism:** Opens up possibilities for creating custom invocation semantics.
+
+#### Cons
+*   **Risk of Over-complexity:** A large number of modifiers could make the language complex.
