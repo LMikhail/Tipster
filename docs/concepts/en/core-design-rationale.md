@@ -4,14 +4,15 @@
 
 | Concept | Key Advantage (Pro) | Main Trade-off (Con) | Decision Weight |
 | :--- | :--- | :--- | :--- |
-| **Clojure Superset** | Huge effort savings by reusing the ecosystem. | High entry barrier for non-Clojure developers. | `++` (Strategically sound) |
-| **`Symbol` over `Atom`** | Eliminates critical confusion with `clojure.core/Atom`. | Minor unfamiliarity for Prolog veterans. | `+` (Pragmatic and necessary) |
-| **Dual Semantics** | Unifies logic and computation in a single construct. | High cognitive load on the developer. | `++` (Risky, but the core innovation) |
-| **`def` vs. `defn`** | Clear semantic separation of data and logic. | Deviates from Prolog's purity, where a fact is a special case of a rule. | `+` (Improves readability) |
-| **`\|` Separator** | Best compromise: valid & visually clear. | Not a standard naming convention. | `+` (Pragmatic and clear) |
-| **`\|l` Modifier** | Elegance and the ability to overload names. | Risk of accidental error (forgetting `\|l`). | `~` (An elegant compromise) |
-| **Invocation Modifiers** | Maximum control and clarity of intent in the code. | Minor syntactic noise. | `++` (Key to flexibility) |
-| **Extensibility** | Ease of adding new evaluation strategies. | Potential for future language complexity. | `+` (Useful future-proofing) |
+| [**Clojure Superset**](#1-tipster-as-a-seamless-superset-of-clojure) | Huge effort savings by reusing the ecosystem. | High entry barrier for non-Clojure developers. | `++` (Strategically sound) |
+| [**`Symbol` over `Atom`**](#2-terminology-symbol-instead-of-atom) | Eliminates critical confusion with `clojure.core/Atom`. | Minor unfamiliarity for Prolog veterans. | `+` (Pragmatic and necessary) |
+| [**Dual Semantics**](#3-dual-semantics-of-terms) | Unifies logic and computation in a single construct. | High cognitive load on the developer. | `++` (Risky, but the core innovation) |
+| [**`def` vs. `defn`**](#4-separation-of-def-facts-and-defn-rulesfunctions) | Clear semantic separation of data and logic. | Deviates from Prolog's purity, where a fact is a special case of a rule. | `+` (Improves readability) |
+| [**`\|` Separator**](#5-rationale-for-choosing-the--separator) | Best compromise: valid & visually clear. | Not a standard naming convention. | `+` (Pragmatic and clear) |
+| [**`\|l` Modifier**](#6-the-l-modifier-for-defining-rules) | Elegance and the ability to overload names. | Risk of accidental error (forgetting `\|l`). | `~` (An elegant compromise) |
+| [**Invocation Modifiers**](#7-explicit-invocation-modifiers-l-f-seq) | Maximum control and clarity of intent in the code. | Minor syntactic noise. | `++` (Key to flexibility) |
+| [**Extensibility**](#8-extensibility-via-modifiers) | Ease of adding new evaluation strategies. | Potential for future language complexity. | `+` (Useful future-proofing) |
+| [**PKVTC Data Model**](#9-data-storage-model-selection) | Radical unification performance improvement. | 25% data increase and reduced DB compatibility. | `++` (Critical for scaling) |
 
 ---
 
@@ -49,7 +50,7 @@ Below is a detailed description of each decision with the pros and cons briefly 
 
 ### 3. Dual Semantics of Terms
 
-**Concept:** Any term `(f t₁ ... tₙ)` can be interpreted both as a logical pattern for search (`Φ_L`) and as a computational expression for execution (`Φ_C`).
+**Concept:** Any term `(f t₁ ... tₙ)` can be interpreted both as a logical pattern for search ($Φ_L$) and as a computational expression for execution ($Φ_C$).
 
 #### Pros
 
@@ -124,3 +125,29 @@ Below is a detailed description of each decision with the pros and cons briefly 
 
 #### Cons
 *   **Risk of Over-complexity:** A large number of modifiers could make the language complex.
+
+### 9. Data Storage Model Selection
+
+**Concept:** Extending the base PKVT model (`Parent-Key-Value-Type`) to PKVTC by adding a `:children` field for direct references to child elements of the structure.
+
+#### Pros
+*   **Radical Performance Improvement:** Unification complexity decreases from O(m×n×log s) to O(m×k), which is critical for systems with billions of facts.
+*   **Index Savings:** Reducing the number of required indices more than compensates for the growth in main data — total savings of 26%.
+*   **Scalability:** Linear complexity instead of quadratic provides predictable performance as data grows.
+*   **Direct Navigation:** O(1) access to child elements instead of O(n) link searches.
+
+#### Cons
+*   **Increased Main Data Volume:** 25% more fields in each record.
+*   **Reduced Relational DB Compatibility:** The `:children` array field is not supported in all DBMS.
+*   **Model Complexity:** Adding a fifth field breaks the elegance of the four-component PKVT.
+
+#### Detailed Rationale
+
+This decision is based on quantitative analysis of five alternative storage models across criteria of performance, compactness, implementation simplicity, and DB compatibility.
+
+**Key Analysis Results:**
+- PKVTC shows the best overall score: 8.6/10 vs 6.6/10 for baseline PKVT
+- For systems with intensive logical computations, the performance gain outweighs the disadvantages
+- Alternative "PKVT + Materialized Paths" (7.5/10) is recommended for projects with critical DB compatibility requirements
+
+> **Detailed Analysis:** Comprehensive comparison of all models with quantitative assessments is presented in [Storage Model Analysis](./storage-model-analysis.md).

@@ -1,260 +1,389 @@
-# Terms Module Functional Specification
+# Tipster Core Functional Specification
 
-## 1. Theoretical Foundation
+## 1. Purpose and Scope
 
-### 1.1 Logic Programming and Terms
+This document describes the functional requirements and software interfaces of all key modules of the Tipster system. It serves as a technical bridge between the conceptual foundations (defined in [core.md](../concepts/en/core.md)) and the software implementation.
 
-In logic programming, **terms** are the fundamental building blocks for representing knowledge and data. A term is a syntactic construct that represents objects, relationships, and structures in a logical system.
+All terminology and mathematical notation should be interpreted in strict accordance with the document [Tipster Core Concepts](../concepts/en/core.md).
 
-**Mathematical Definition**: Let V be a countably infinite set of variables, F be a set of function symbols (functors), and each f ∈ F has an associated arity ar(f) ≥ 0. The set of **terms** T(F,V) is the smallest set such that:
+---
 
-1. **V ⊆ T(F,V)** (all variables are terms)
-2. **If f ∈ F and ar(f) = 0, then f ∈ T(F,V)** (nullary functors are terms)
-3. **If f ∈ F, ar(f) = n > 0, and t₁, t₂, ..., tₙ ∈ T(F,V), then f(t₁, t₂, ..., tₙ) ∈ T(F,V)** (compound terms)
+## 2. Module Architecture and Dependencies
 
-**Formal Classification**: A **term** t ∈ T(F,V) is either:
-- A **variable** if t ∈ V
-- An **atom** (atomic term) if t ∈ F and ar(t) = 0  
-- A **compound term** if t = f(t₁, t₂, ..., tₙ) where f ∈ F, ar(f) = n > 0, and tᵢ ∈ T(F,V)
+### 2.1 Dependency Hierarchy
 
-### 1.2 Functors
-
-**Mathematical Definition**: A **functor** is a function symbol f ∈ F with an associated arity ar(f) ∈ ℕ₀ (non-negative integers).
-
-**Notation**: f/n denotes a functor f with arity n.
-
-**Properties**:
-- **Arity**: ar(f) defines the number of arguments the functor takes
-- **Identity**: Two functors are identical iff they have the same name and arity
-- **Classification**:
-  - **Constant** (atom): f/0 (arity 0)
-  - **Function symbol**: f/n where n > 0
-
-**Examples**:
-- `person/2` - functor with arity 2: `person(john, 30)`
-- `address/3` - functor with arity 3: `address("Main St", 123, "NY")`
-- `john/0` - constant (atom): `john`
-
-### 1.3 Compound Terms
-
-**Mathematical Definition**: A **compound term** is a term of the form f(t₁, t₂, ..., tₙ) where:
-- f ∈ F is a functor with ar(f) = n > 0
-- t₁, t₂, ..., tₙ ∈ T(F,V) are terms (arguments)
-- The structure is well-formed according to the arity constraint
-
-**Formal Structure**: 
 ```
-compound_term ::= functor(arg₁, arg₂, ..., argₙ)
-where n = ar(functor) > 0
+types.clj           (foundation - protocols and base types)
+    ↓
+terms.clj           (term operations)
+    ↓
+unification.clj     (unification algorithm)
+    ↓
+solver.clj          (reasoning engine)
+    ↓
+knowledge.clj       (knowledge base)
+    ↓
+core.clj            (public API)
 ```
 
-**Properties**:
-- **Principal functor**: The outermost functor f
-- **Arguments**: The sequence of terms (t₁, t₂, ..., tₙ)
-- **Arity**: The number of arguments n = ar(f)
-- **Depth**: Maximum nesting level of compound terms
-- **Size**: Total number of functor and variable occurrences
+### 2.2 Modular Architecture Principles
 
-### 1.4 Unification and Pattern Matching
+- **Minimal dependencies**: each module depends only on strictly necessary lower-level modules
+- **Clear interfaces**: all interactions between modules happen through explicitly defined protocols
+- **Testability**: each module can be tested independently
 
-Terms enable **unification** - the process of making two terms identical by finding appropriate variable bindings. This is the core mechanism that powers logical inference in Tipster.
+---
 
-**Mathematical Definition**: A **substitution** σ is a finite mapping from variables to terms: σ: V → T(F,V).
+## 3. Module `tipster.types`
 
-**Unification**: Two terms s, t ∈ T(F,V) are **unifiable** if there exists a substitution σ such that σ(s) = σ(t). The substitution σ is called a **unifier**.
+### 3.1 Purpose
+Fundamental module defining basic data types and protocols for implementing dual semantics of terms ($Φ_L$ and $Φ_C$).
 
-**Most General Unifier (MGU)**: A unifier σ is most general if for any other unifier θ, there exists a substitution γ such that θ = γ ∘ σ.
+### 3.2 Key Protocols
 
-**Example**:
-```
-f(X, a) unifies with f(b, Y) 
-→ MGU: σ = {X ↦ b, Y ↦ a}
-→ σ(f(X, a)) = σ(f(b, Y)) = f(b, a)
-```
-
-### 1.5 Dual Semantics in Tipster
-
-In Tipster's dual semantics model, terms serve two purposes:
-
-1. **Computational Semantics**: Terms represent data structures and function calls
-2. **Logical Semantics**: Terms represent logical facts and patterns for inference
-
-**Example**:
+#### 3.2.1 Dual Semantics Protocol
 ```clojure
-;; Same term structure, dual interpretation:
-(employee "John" 30 "IT")
-
-;; Computational: creates an employee record
-;; Logical: represents a fact about John being an employee
+(defprotocol IDualSemantics
+  "Protocol for implementing dual semantics of terms"
+  (logical-eval [this context] 
+    "Logical interpretation (Φ_L): term as pattern for unification")
+  (computational-eval [this context] 
+    "Computational interpretation (Φ_C): term as expression for evaluation"))
 ```
 
-### 1.6 Structure Decomposition
-
-Terms in Tipster are designed for **structure decomposition** - the ability to break down complex data structures into their constituent parts for pattern matching and logical inference.
-
-**Mathematical Properties**:
-- **Compositionality**: T(F,V) is closed under functor application
-- **Decomposability**: Every compound term f(t₁, ..., tₙ) can be decomposed into f and (t₁, ..., tₙ)
-- **Unifiability**: For any terms s, t ∈ T(F,V), unification is decidable
-
-## 2. Term Types and Definitions
-
-### 2.1 Variables
-
-**Mathematical Definition**: A **variable** is an element v ∈ V where V is a countably infinite set disjoint from F.
-
-**Properties**:
-- **Unification**: A variable X can unify with any term t ∈ T(F,V)
-- **Identity**: Each variable has a unique identifier
-- **Scope**: Variables maintain consistent identity within a logical context
-
-**Formal Notation**: Variables are denoted by uppercase letters: X, Y, Z, or symbolic names
-
-**Syntax in Tipster**: Variables are prefixed with `?` in Clojure syntax: `?X`, `?name`
-
-### 2.2 Atoms (Atomic Terms)
-
-**Mathematical Definition**: An **atom** is a term a ∈ F where ar(a) = 0.
-
-**Properties**:
-- **Indivisibility**: Cannot be decomposed further
-- **Unification**: An atom a unifies only with identical atoms or variables
-- **Ground term**: Contains no variables
-
-**Examples**: `john`, `42`, `"hello"`, `:keyword`
-
-### 2.3 Compound Terms
-
-**Mathematical Definition**: A **compound term** is a term of the form f(t₁, t₂, ..., tₙ) where:
-- f ∈ F with ar(f) = n > 0 (the principal functor)
-- t₁, t₂, ..., tₙ ∈ T(F,V) (the arguments)
-
-**Structural Properties**:
-- **Principal functor**: f
-- **Arity**: n = ar(f)
-- **Arguments**: (t₁, t₂, ..., tₙ)
-- **Subterms**: All tᵢ and their subterms
-
-**Recursive Structure**: Arguments can themselves be compound terms, enabling nested composition.
-
-**Examples**:
+#### 3.2.2 Base Term Protocol
 ```clojure
-person("John", 30)           ; functor: person/2, args: ["John", 30]
-address("Main St", 123, "NY") ; functor: address/3, args: ["Main St", 123, "NY"]
-parent(person("Alice"), person("Bob")) ; nested compound terms
+(defprotocol ITerm
+  "Base protocol for all term types"
+  (term-type [this] "Returns term type: :variable, :constant, :compound")
+  (is-ground? [this] "Checks if term is ground (no variables)")
+  (variables [this] "Returns set of all variables in term")
+  (subst [this substitution] "Applies substitution to term"))
 ```
 
-**Unification Rule**: Two compound terms f(s₁, ..., sₙ) and g(t₁, ..., tₘ) unify iff:
-1. f = g (same functor)
-2. n = m (same arity)  
-3. sᵢ and tᵢ unify for all i ∈ {1, ..., n}
-
-## 3. Data Structure Integration
-
-### 3.1 Clojure Data Structure Mapping
-
-Tipster terms provide seamless integration with Clojure data structures through a formal mapping function:
-
-**Mapping Function**: φ: ClojureData → T(F,V)
-
-| Clojure Type | Tipster Term | Formal Mapping |
-|--------------|--------------|----------------|
-| Symbol starting with `?` | Variable | φ(?X) = X ∈ V |
-| Other symbols | Atom | φ(s) = s ∈ F, ar(s) = 0 |
-| Lists | Compound | φ((f a₁ ... aₙ)) = f(φ(a₁), ..., φ(aₙ)) |
-| Vectors | Compound | φ([a₁ ... aₙ]) = vector(φ(a₁), ..., φ(aₙ)) |
-| Primitives | Atom | φ(c) = c ∈ F, ar(c) = 0 |
-
-### 3.2 Bidirectional Conversion
-
-The terms module provides bidirectional conversion with inverse mapping:
-
-**Inverse Mapping**: φ⁻¹: T(F,V) → ClojureData
-
-**Properties**:
-- **Homomorphism**: φ preserves term structure
-- **Invertibility**: φ⁻¹(φ(d)) ≈ d for well-formed Clojure data
-- **Type preservation**: Semantic meaning is preserved during conversion
-
-## 4. Functional Requirements
-
-### 4.1 Term Creation
-- **R1**: Create variables v ∈ V with unique identifiers
-- **R2**: Create atoms a ∈ F with ar(a) = 0 from any Clojure value
-- **R3**: Create compound terms f(t₁, ..., tₙ) with f ∈ F, ar(f) = n > 0
-- **R4**: Implement mapping φ: ClojureData → T(F,V)
-
-### 4.2 Term Inspection
-- **R5**: Determine term type: variable, atom, or compound
-- **R6**: Extract functor and arguments from compound terms
-- **R7**: Implement predicates: is-variable?, is-compound?
-
-### 4.3 Type Conversion
-- **R8**: Implement φ: ClojureData → T(F,V)
-- **R9**: Implement φ⁻¹: T(F,V) → ClojureData
-- **R10**: Handle nested structures recursively
-- **R11**: Preserve semantic meaning during conversion
-
-### 4.4 Integration Support
-- **R12**: Support variable dereferencing with substitutions
-- **R13**: Integration with unification algorithms
-- **R14**: Efficient representation for pattern matching
-
-## 5. Usage Patterns
-
-### 5.1 Basic Term Creation
+#### 3.2.3 Execution Context Protocol
 ```clojure
-;; Creating terms explicitly
-(make-variable "X")           ; Creates X ∈ V
-(make-atom 'john)            ; Creates john ∈ F, ar(john) = 0
-(make-compound 'person 'john 30) ; Creates person(john, 30)
-
-;; Automatic conversion via φ
-(clojure-term->tipster-term '?X)        ; φ(?X) = X ∈ V
-(clojure-term->tipster-term 'john)      ; φ(john) = john ∈ F  
-(clojure-term->tipster-term '(f a b))   ; φ((f a b)) = f(a, b)
+(defprotocol IExecutionContext
+  "Protocol for execution context management"
+  (get-binding [this var] "Gets variable value")
+  (add-binding [this var value] "Adds variable binding")
+  (get-knowledge-base [this] "Gets current knowledge base"))
 ```
 
-### 5.2 Pattern Matching
+### 3.3 Functional Requirements
+
+**R3.1**: Module must define protocols `IDualSemantics`, `ITerm`, `IExecutionContext`
+
+**R3.2**: All base term types must implement `IDualSemantics` and `ITerm`
+
+**R3.3**: Execution context must support immutable binding operations
+
+---
+
+## 4. Module `tipster.terms`
+
+### 4.1 Purpose
+Implements concrete term types and functions for working with them, including conversions between Clojure and Tipster representations.
+
+### 4.2 Data Structures
+
+#### 4.2.1 Variable
 ```clojure
-;; Pattern with variables
-(clojure-term->tipster-term '(person ?name ?age))
-;; → person(X, Y) where X, Y ∈ V
-
-;; Unification target
-(clojure-term->tipster-term '(person john 30))
-;; → person(john, 30)
-
-;; Unification: σ = {X ↦ john, Y ↦ 30}
+(defrecord Variable [name id]
+  ITerm
+  IDualSemantics
+  ;; method implementations
+  )
 ```
 
-### 5.3 Structure Decomposition
+#### 4.2.2 Constant
 ```clojure
-;; Complex nested structure
-(clojure-term->tipster-term 
-  '(employee (person ?name ?age) 
-             (department ?dept ?manager)))
-;; → employee(person(X, Y), department(Z, W))
-
-;; Can unify with:
-'(employee (person "Alice" 25) 
-           (department "IT" "Bob"))
-;; → employee(person("Alice", 25), department("IT", "Bob"))
+(defrecord Constant [value]
+  ITerm
+  IDualSemantics
+  ;; method implementations
+  )
 ```
 
-## 6. Design Principles
+#### 4.2.3 Compound Term
+```clojure
+(defrecord Compound [functor args]
+  ITerm
+  IDualSemantics
+  ;; method implementations
+  )
+```
 
-### 6.1 Mathematical Rigor
-All operations are based on formal mathematical definitions from term algebra and unification theory.
+### 4.3 Key Functions
 
-### 6.2 Compositionality  
-Complex terms are built from simpler terms following the recursive definition of T(F,V).
+#### 4.3.1 Constructors
+```clojure
+(defn make-variable [name] ...)
+(defn make-constant [value] ...)
+(defn make-compound [functor & args] ...)
+```
 
-### 6.3 Transparency
-Seamless integration with Clojure data structures through formal mapping functions.
+#### 4.3.2 Conversions
+```clojure
+(defn clojure->term [data] 
+  "Implements mapping φ: Clojure structures → Tipster terms")
 
-### 6.4 Efficiency
-Efficient representation using Clojure records and protocols for optimal performance.
+(defn term->clojure [term context] 
+  "Implements mapping φ⁻¹: Tipster terms → Clojure structures")
+```
 
-### 6.5 Extensibility
-Protocol-based design allows for future extensions while maintaining mathematical foundations.
+#### 4.3.3 Utilities
+```clojure
+(defn occurs-check [var term] 
+  "Checks for circular references")
+
+(defn rename-variables [term prefix] 
+  "Renames variables in term")
+```
+
+### 4.4 Functional Requirements
+
+**R4.1**: Must implement structures `Variable`, `Constant`, `Compound`
+
+**R4.2**: All structures must implement protocols `ITerm` and `IDualSemantics`
+
+**R4.3**: Function `clojure->term` must correctly convert all basic Clojure types
+
+**R4.4**: Function `term->clojure` must consider variable bindings from context
+
+---
+
+## 5. Module `tipster.unification`
+
+### 5.1 Purpose
+Implements Robinson's unification algorithm for term matching, including substitution system.
+
+### 5.2 Key Functions
+
+#### 5.2.1 Unification
+```clojure
+(defn unify [term1 term2]
+  "Finds most general unifier (MGU) for two terms
+   Returns: {:success true :substitution {...}} or {:success false}")
+
+(defn unify-with-subst [term1 term2 existing-subst]
+  "Unification with existing substitutions")
+```
+
+#### 5.2.2 Substitutions
+```clojure
+(defn empty-substitution [] 
+  "Creates empty substitution")
+
+(defn compose-substitutions [subst1 subst2] 
+  "Substitution composition")
+
+(defn apply-substitution [term substitution] 
+  "Applies substitution to term")
+```
+
+#### 5.2.3 Collection Unification
+```clojure
+(defn unify-sequences [seq1 seq2]
+  "Unification of term sequences")
+
+(defn unify-mappings [map1 map2]
+  "Unification of mappings")
+```
+
+### 5.3 Functional Requirements
+
+**R5.1**: Function `unify` must implement complete Robinson algorithm
+
+**R5.2**: Must implement occurs check for circular references
+
+**R5.3**: Substitution system must support composition and application
+
+**R5.4**: Must support unification of Clojure collections (vectors, maps, sets)
+
+---
+
+## 6. Module `tipster.solver`
+
+### 6.1 Purpose
+Implements logical inference engine with backtracking, returning lazy sequences of solutions.
+
+### 6.2 Key Functions
+
+#### 6.2.1 Main Engine
+```clojure
+(defn solve [goal knowledge-base]
+  "Finds all solutions for logical goal
+   Returns: lazy sequence of variable bindings")
+
+(defn solve-with-context [goal context]
+  "Solving with given execution context")
+```
+
+#### 6.2.2 Backtracking Management
+```clojure
+(defn backtrack [choice-points]
+  "Implements backtracking search")
+
+(defn create-choice-point [alternatives context]
+  "Creates choice point for alternatives")
+```
+
+#### 6.2.3 Query Optimization
+```clojure
+(defn reorder-goals [goals knowledge-base]
+  "Reorders goals for optimization")
+
+(defn estimate-goal-cost [goal knowledge-base]
+  "Estimates goal execution cost")
+```
+
+### 6.3 Functional Requirements
+
+**R6.1**: Engine must return lazy sequences of solutions
+
+**R6.2**: Must implement full backtracking with choice points
+
+**R6.3**: System must support early termination and solution limits
+
+**R6.4**: Must have basic goal execution order optimization
+
+---
+
+## 7. Module `tipster.knowledge`
+
+### 7.1 Purpose
+Implements knowledge base for storing facts and rules, including indexing and efficient search.
+
+### 7.2 Key Functions
+
+#### 7.2.1 Fact Management
+```clojure
+(defn add-fact [kb fact]
+  "Adds fact to knowledge base")
+
+(defn remove-fact [kb fact]
+  "Removes fact from knowledge base")
+
+(defn query-facts [kb pattern]
+  "Finds facts that unify with pattern")
+```
+
+#### 7.2.2 Rule Management
+```clojure
+(defn add-rule [kb rule]
+  "Adds rule to knowledge base")
+
+(defn query-rules [kb head-pattern]
+  "Finds rules with matching head")
+```
+
+#### 7.2.3 Indexing
+```clojure
+(defn build-indexes [kb]
+  "Builds indexes for search acceleration")
+
+(defn query-by-functor [kb functor arity]
+  "Fast search by functor and arity")
+```
+
+### 7.3 Functional Requirements
+
+**R7.1**: Knowledge base must support efficient fact addition and removal
+
+**R7.2**: Must implement functor-based indexing
+
+**R7.3**: Queries must return lazy sequences of results
+
+**R7.4**: Knowledge base must be a persistent data structure
+
+---
+
+## 8. Module `tipster.core`
+
+### 8.1 Purpose
+Main API module providing high-level functions and macros for working with Tipster.
+
+### 8.2 Key Macros and Functions
+
+#### 8.2.1 Entity Definition
+```clojure
+(defmacro def [& args]
+  "Extended def for fact definition")
+
+(defmacro defn|l [name args & body]
+  "Definition of logical rules")
+```
+
+#### 8.2.2 Invocation Modifiers
+```clojure
+(defn invoke-with-modifier [fn-name modifier & args]
+  "Function invocation with semantic modifier (|l, |f, |seq)")
+```
+
+#### 8.2.3 High-level Queries
+```clojure
+(defn query [pattern & options]
+  "High-level query interface")
+
+(defn ask [goal & options]
+  "Goal truth checking")
+```
+
+### 8.3 Functional Requirements
+
+**R8.1**: Macros must correctly handle modifiers (|l, |f, |seq)
+
+**R8.2**: API must be compatible with Clojure idioms
+
+**R8.3**: Must support interactive REPL work
+
+---
+
+## 9. Implementation Order
+
+### 9.1 Stage 1: Foundation (types.clj)
+- Define base protocols
+- Implement type system
+- Basic protocol tests
+
+### 9.2 Stage 2: Terms (terms.clj)  
+- Implement concrete term types
+- Conversion functions
+- Tests for all term operations
+
+### 9.3 Stage 3: Unification (unification.clj)
+- Robinson algorithm
+- Substitution system
+- Tests for complex unification cases
+
+### 9.4 Stage 4: Solver (solver.clj)
+- Basic backtracking engine
+- Lazy sequences
+- Integration tests
+
+### 9.5 Stage 5: Knowledge Base (knowledge.clj)
+- Fact and rule storage
+- Basic indexing
+- Performance tests
+
+### 9.6 Stage 6: Integration (core.clj)
+- Public API
+- Macros and syntactic sugar
+- Full-featured tests
+
+---
+
+## 10. Readiness Criteria
+
+### 10.1 For Each Module
+- All functional requirements (R*.*) fulfilled
+- Test coverage >= 90%
+- All public functions documented
+- Code review passed
+
+### 10.2 For System as a Whole
+- Documentation examples run successfully
+- Integration tests pass
+- Performance meets basic requirements
+- API is stable and user-friendly
