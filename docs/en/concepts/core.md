@@ -59,6 +59,8 @@ Structurally, a term can be one of three things:
 
     The unification of compound terms always occurs structurally: the system attempts to recursively match their components.
 
+    > **Detailed Information:** Detailed algorithms for term decomposition for efficient unification are described in the [Term Decomposition Specification](../terms/term-decomposition.md).
+
 ### Dual Semantics of a Term
 
 Now that we have defined the different kinds of terms, we can clarify their key feature in Tipster—**dual semantics**. This means that the same syntactic construct can be interpreted either as a **logical pattern for matching** or as a **computable expression**. This duality manifests differently for different terms.

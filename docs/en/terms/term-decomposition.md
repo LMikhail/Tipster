@@ -986,4 +986,4 @@ Term decomposition in Tipster provides:
 - **PKVT + smart navigation:** Maximum compatibility with any DBMS, implementation simplicity, suitable for small and medium data volumes
 - **PKVTC + direct links:** Radical performance improvement (5-20x), critical for systems with billions of facts, optimal memory usage
 
-This architecture serves as the foundation for implementing dual semantics and universal knowledge space in Tipster, providing both implementation simplicity and scalability to industrial volumes. 
+This architecture serves as the foundation for implementing dual semantics and universal knowledge space in Tipster, providing both implementation simplicity and scalability to industrial volumes.

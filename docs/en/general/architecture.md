@@ -16,35 +16,38 @@ This document should be read in conjunction with the [Roadmap (roadmap.md)](./ro
 
 ```mermaid
 graph TD;
-    subgraph "Compile Time"
-        A["Source Code (.clj)<br/>(def, defn, defn::l)"] -- "Reads & Analyzes" --> B["<b>Compiler</b><br/>Static Analysis (AOT)<br/>Type Checking"];
+    subgraph "Compile Time (Development Stage)"
+        A["Source Code (.clj)<br/>(def, defn, defn::l)"] -- "Reads and analyzes" --> B["<b>Compiler</b><br/>Static Analysis (AOT)<br/>Type Checking"];
     end
 
-    subgraph "Runtime"
-        C["<b>Knowledge Base (PKVT)</b><br/>Persistent Storage for<br/>Facts, Rules, Functions"];
-        D["<b>Execution Engine</b><br/>Unification & Backtracking"];
+    subgraph "Runtime (Execution Stage)"
+        C["<b>Knowledge Base (PKVT)</b><br/>Persistent storage<br/>facts, rules, functions"];
+        D["<b>Execution Engine</b><br/>Unification and management"];
+        CM["<b>Combinatorial Machine</b><br/>Search with backtracking<br/>Backtracking"];
         E["<b>API Layer & Adapters</b><br/>(REST, WebSocket, JDBC)"];
         F["<b>User / Applications</b>"];
-        G["<b>External Databases</b>"];
-        H["<b>Intelligent Pipeline</b><br/>Query Optimizer + JIT"];
+        G["<b>External DBMS</b>"];
+        H["<b>Intelligent Pipeline</b><br/>Query optimizer + JIT"];
     end
 
     B -- "Populates" --> C;
 
     F -- "Queries" --> E;
     G -- "Data" --> E;
-    E -- "(1) Sends Goal" --> D;
-    D -- "(2) Requests Execution Plan" --> H;
-    H -- "(3) Builds & Returns<br/>Optimized Plan" --> D;
-    D -- "(4) Executes Plan,<br/>Accessing KB" --> C;
-    C -- "(5) Returns Data/Rules" --> D;
-    D -- "(6) Returns Result" --> E;
+    E -- "(1) Passes goal" --> D;
+    D -- "(2) Requests execution plan" --> H;
+    H -- "(3) Builds and returns<br/>optimized plan" --> D;
+    D -- "(4) Delegates search" --> CM;
+    CM -- "(5) Queries for rules" --> C;
+    C -- "(6) Returns rules" --> CM;
+    CM -- "(7) Returns solutions" --> D;
+    D -- "(8) Returns result" --> E;
     E -- "Results" --> F;
 
     classDef component fill:#f2f2f2,stroke:#333,stroke-width:2px;
     classDef external fill:#fff,stroke:#888,stroke-width:1px;
     
-    class B,C,D,E,H component;
+    class B,C,D,E,H,CM component;
     class A,F,G external;
 ```
 
@@ -86,13 +89,31 @@ graph TD;
 **Responsible for:** Directly executing queries and finding all possible solutions for a given logical goal. It is the "workhorse" of the system, implementing the classic mechanisms of logic programming.
 
 *   **Input:** A logical goal (from the [API Layer](#api-layer--adapters)) and, optionally, an optimized execution plan (from the [Intelligent Pipeline](#intelligent-pipeline)).
-*   **Interaction:** Actively queries the [Knowledge Base (PKVT)](#knowledge-base-pkvt) to retrieve facts and rules needed to prove the goal.
+*   **Term Decomposition:** Transforms complex Clojure structures into optimized form for efficient unification. Key stages:
+    *   **Structural Analysis:** Breaking down compound terms into functor and arguments
+    *   **Recursive Processing:** Decomposition of nested collections (vectors, maps, sets)
+    *   **Unification Metadata:** Creating indexes and signatures for fast matching
+    *   **PKVT Integration:** Conversion to atomic records for storage
+*   **Interaction:** Actively queries the [Knowledge Base (PKVT)](#knowledge-base-pkvt) to retrieve facts and rules, and delegates solution search to the [Combinatorial Machine](#combinatorial-machine).
 *   **Output:** A lazy sequence of solutions, where each solution is a set of bound variables.
 
 **Architectural Rationale ("Why"):**
-1.  **A Proven Core:** The engine is based on time-tested algorithms: Robinson's unification for term matching and backtracking for traversing the solution tree. This ensures correctness and completeness of the search.
+1.  **A Proven Core:** The engine is based on time-tested algorithms: Robinson's unification for term matching. This ensures correctness of the search.
 2.  **Lazy Sequences:** Returning results as lazy sequences is an idiomatic Clojure solution. It is extremely memory-efficient, allowing for the processing of potentially infinite or very large result sets without loading them all into memory at once.
-3.  **Separation of "Mechanics" from "Strategy":** The engine is responsible for the *mechanics* of the search (how to unify, how to backtrack). It deliberately does not handle the *strategy* (in what order to try the goals). It delegates this task to the [Intelligent Pipeline](#intelligent-pipeline), which allows the core to remain simple and reliable, while the optimizer can be as complex as needed.
+3.  **Separation of "Unification" from "Search":** The engine is responsible for *unification* of terms and state management. It delegates *search with backtracking* to the [Combinatorial Machine](#combinatorial-machine), allowing each component to be specialized and efficient.
+
+### Combinatorial Machine
+
+**Responsible for:** Implementing algorithms for solution search in the space of logical possibilities. This is an independent architectural block that encapsulates various strategies for traversing the search tree.
+
+*   **Input:** A logical goal and a set of available rules from the [Knowledge Base](#knowledge-base-pkvt).
+*   **Algorithms:** Search with backtracking, depth-first search, breadth-first search, iterative deepening.
+*   **Output:** A sequence of potential solutions for the [Execution Engine](#execution-engine).
+
+**Architectural Rationale ("Why"):**
+1.  **Search Modularity:** Separating search into a distinct component allows experimentation with different strategies (DFS, BFS, A*) without changing the unification logic.
+2.  **Scalability:** The Combinatorial Machine can be optimized for specific types of tasks or even distributed across multiple nodes.
+3.  **Reusability:** The same search algorithm can be used for different types of logical tasks, from simple queries to complex planning and optimization.
 
 ### Intelligent Pipeline
 

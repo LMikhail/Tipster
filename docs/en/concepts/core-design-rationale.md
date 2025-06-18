@@ -150,4 +150,6 @@ This decision is based on quantitative analysis of five alternative storage mode
 - For systems with intensive logical computations, the performance gain outweighs the disadvantages
 - Alternative "PKVT + Materialized Paths" (7.5/10) is recommended for projects with critical DB compatibility requirements
 
-> **Detailed Analysis:** Comprehensive comparison of all models with quantitative assessments is presented in [Storage Model Analysis](./storage-model-analysis.md).
+> **Detailed Analysis:** Comprehensive comparison of all models with quantitative assessments is presented in [Storage Model Analysis](../terms/storage-model-analysis.md).
+
+ 

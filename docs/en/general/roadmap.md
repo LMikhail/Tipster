@@ -59,6 +59,12 @@ To ensure transparency and predictability in the development process, we adhere 
 *   [ ] **Performance Optimization:**
     *   Profiling and benchmarking of key operations (unification, search).
 
+**Success Criteria:**
+*   The logic engine correctly finds all solutions for complex recursive queries (e.g., pathfinding in graphs).
+*   A comprehensive set of unit and integration tests covers more than 90% of the core logic.
+*   Benchmarks show performance comparable to or exceeding similar functions in well-known Prolog systems for representative tasks.
+*   The core API (`def`, `defn::l`, etc.) is stable and well-documented.
+
 **Current Status (based on `v0.0.3`):**
 *   Stub macros for `deffact` and `defrule` are implemented.
 *   Simplistic unification without backtracking.
@@ -78,6 +84,12 @@ To ensure transparency and predictability in the development process, we adhere 
     *   Transparent translation of parts of logic queries into native database queries.
 *   [ ] **Federated Queries (alpha):** The ability to execute a single logic query against data residing in multiple sources simultaneously (e.g., in-memory + PostgreSQL).
 *   [ ] **Extension API:** A mechanism for creating custom connectors and predicates.
+
+**Success Criteria:**
+*   A single query can be written that combines data from the internal knowledge base, a Clojure vector, and a PostgreSQL table.
+*   The process of creating a new data adapter is clearly documented and demonstrated with a working example.
+*   Calling a standard Clojure function from a Tipster rule is as simple as calling a predicate.
+*   Performance degradation for federated queries is predictable and within reasonable limits.
 
 ---
 
@@ -105,6 +117,12 @@ To ensure transparency and predictability in the development process, we adhere 
     *   Saving and loading the knowledge space to/from disk.
     *   A Write-Ahead Logging (WAL) mechanism to ensure integrity.
 
+**Success Criteria:**
+*   The entire codebase of the project (rules, facts, functions) can be represented and stored in the PKVT structure without loss of information.
+*   A query like "find all functions that use the `parent` predicate and were defined by user 'X'" can be successfully executed.
+*   Query performance against the PKVT-based knowledge base is comparable to the previous in-memory version for data-oriented queries.
+*   The knowledge base can be successfully saved to disk and reloaded, restoring the system to its previous state.
+
 ---
 
 ### Stage 4: `v0.4.x` — Accessibility
@@ -129,6 +147,12 @@ To ensure transparency and predictability in the development process, we adhere 
 *   [ ] **Security and Access Control:**
     *   Basic authentication and authorization mechanisms for the API and UI.
 
+**Success Criteria:**
+*   A developer can debug a non-working query using tracing and introspection tools in their REPL.
+*   A web application can be created that uses the REST API to query and display data from Tipster.
+*   A new user can set up a project and run their first query within 15 minutes using the CLI and documentation.
+*   The web interface allows intuitive browsing of the knowledge graph and interactive query execution.
+
 ---
 
 ### Stage 5: `v0.5.x` — Intelligence
@@ -142,6 +166,12 @@ To ensure transparency and predictability in the development process, we adhere 
 *   [ ] **Strategy Planner:** Introduction of mixed-mode invocation strategies (`::fl`, `::lf`) and automatic selection of the best strategy based on statistics.
 *   [ ] **Materialized Views:** The ability to cache the results of complex rules to speed up repeated queries.
 *   [ ] **Machine Learning Elements:** Integration with ML libraries to create predicates based on probabilistic models.
+
+**Success Criteria:**
+*   For a non-trivial query, the query optimizer can demonstrate (e.g., through an `EXPLAIN` command) that it changed the order of joins to reduce the search space.
+*   Enabling JIT compilation provides measurable performance improvement (e.g., >30%) for long-running and complex queries.
+*   The system can automatically choose between different computation strategies (`::l`, `::f`) based on data statistics to improve performance.
+*   A complex, frequently used rule can be materialized, and subsequent queries using it execute an order of magnitude faster.
 
 ---
 

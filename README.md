@@ -2,7 +2,7 @@
 
 [![Clojure](https://img.shields.io/badge/Clojure-1.12+-blue.svg)](https://clojure.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-0.0.3--dev-orange.svg)](docs/en/roadmap.md)
+[![Version](https://img.shields.io/badge/Version-0.0.3--dev-orange.svg)](docs/en/general/roadmap.md)
 
 ---
 
@@ -43,7 +43,7 @@
 - Full bilingual support (English/Russian)
 - REPL-friendly development environment
 
-**🚀 Full vision roadmap:** [docs/en/roadmap.md](docs/en/roadmap.md) | [docs/ru/roadmap.md](docs/ru/roadmap.md)
+**🚀 Full vision roadmap:** [docs/en/general/roadmap.md](docs/en/general/roadmap.md) | [docs/ru/general/roadmap.md](docs/ru/general/roadmap.md)
 
 ---
 
@@ -218,16 +218,21 @@ Aggregations emerge naturally from logical inference:
 
 ## 📚 Documentation
 
+> **📋 Centralized Navigation:** Complete documentation is organized into **general**, **concepts**, and **terms** sections with easy navigation via the [Documentation Portal](docs/en/README.md).
+
 ### English
-- [📖 General Description](docs/en/general_description.md) - Project overview and vision
-- [🏗️ Architecture](docs/en/architecture.md) - Technical deep dive
-- [🗺️ Roadmap](docs/en/roadmap.md) - Development plan
+- [📚 **Complete Documentation Portal**](docs/en/README.md) - All documentation with easy navigation
+- [📖 General Description](docs/en/general/general_description.md) - Project overview and vision
+- [🏗️ Architecture](docs/en/general/architecture.md) - Technical deep dive  
+- [🗺️ Roadmap](docs/en/general/roadmap.md) - Development plan
+- [🔧 Technical Specs](docs/en/terms/) - Core concepts, algorithms, and specifications
 - [💡 Examples](examples/README.md) - Hands-on learning
 
 ### Русский  
-- [📖 Общее описание](docs/ru/general_description.md) - Обзор проекта и видение
-- [🏗️ Архитектура](docs/ru/architecture.md) - Техническое описание
-- [🗺️ Дорожная карта](docs/ru/roadmap.md) - План развития
+- [📚 **Портал документации**](docs/ru/README.md) - Вся документация с удобной навигацией
+- [📖 Общее описание](docs/ru/general/general_description.md) - Обзор проекта и видение
+- [🏗️ Архитектура](docs/ru/general/architecture.md) - Техническое описание
+- [🗺️ Дорожная карта](docs/ru/general/roadmap.md) - План развития
 - [💡 Примеры](ru/QUICKSTART.md) - Практическое изучение
 
 ---
