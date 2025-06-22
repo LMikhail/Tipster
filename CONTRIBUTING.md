@@ -52,4 +52,12 @@ Performance is a key feature of Tipster.
 4.  Ensure that all tests pass successfully.
 5.  Submit a `Pull Request` to the main repository with a detailed description of the changes you have made.
 
+## Contact
+
+For questions about contributions or commercial use, please see [CONTACT.md](CONTACT.md).
+
+## Authors
+
+See [AUTHORS.md](AUTHORS.md) for information about project authors and contributors.
+
 Thank you for your contribution to the development of Tipster! 

@@ -1,7 +1,7 @@
 # Tipster — функционально-логический язык программирования с двойной семантикой
 
 [![Clojure](https://img.shields.io/badge/Clojure-1.12+-blue.svg)](https://clojure.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](../LICENSE)
 [![Version](https://img.shields.io/badge/Version-0.0.3--dev-orange.svg)](../docs/ru/general/roadmap.md)
 
 ---
@@ -255,7 +255,7 @@ cd tipster
 
 ## 📄 Лицензия
 
-Лицензия MIT — свободно используйте, изменяйте и распространяйте.
+Apache License 2.0 — свободно используйте, изменяйте и распространяйте с указанием авторства.
 
 ---
 

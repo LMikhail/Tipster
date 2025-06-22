@@ -1,7 +1,7 @@
 # Tipster — Functional-Logical Programming Language with Dual Semantics
 
 [![Clojure](https://img.shields.io/badge/Clojure-1.12+-blue.svg)](https://clojure.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/Version-0.0.3--dev-orange.svg)](docs/en/general/roadmap.md)
 
 ---
@@ -255,7 +255,7 @@ Aggregations emerge naturally from logical inference:
 
 ## 📄 License
 
-MIT License - freely use, modify, and distribute.
+Apache License 2.0 - freely use, modify, and distribute with attribution.
 
 ---
 
